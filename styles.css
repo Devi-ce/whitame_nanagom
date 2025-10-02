@@ -1,0 +1,198 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+body {
+    min-height: 100vh;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+}
+
+/* 메인 컨테이너 - 빈 캔버스 */
+.main-container {
+    width: 822px;
+    height: 648px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* frame2 레이어 추가 */
+.frame2-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_frame2.png');
+    background-size: 822px 648px;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* 원래 배경 이미지 레이어 */
+.background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_background.png');
+    background-size: 806px 592px;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+    top: 30px;
+    pointer-events: none;
+}
+
+/* 프레임 이미지 추가 */
+.main-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_frame.png');
+    background-size: 806px 592px;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 3;
+    top: 30px;
+    pointer-events: none;
+}
+
+.characters-container {
+    display: flex;
+    padding: 40px;
+    transform: translateY(30px);
+    position: relative;
+    z-index: 4;
+}
+
+.character-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.character-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.character {
+    position: relative;
+    top: -10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 실제 이미지를 사용할 때를 위한 스타일 */
+.character-image {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    display: none; /* 이미지가 로드되면 block으로 변경 */
+    -webkit-filter: drop-shadow(3px 0 0 white) drop-shadow(-3px 0 0 white) drop-shadow(0 3px 0 white) drop-shadow(0 -3px 0 white) drop-shadow(20px 0 0 black);
+    filter: drop-shadow(3px 0 0 white) drop-shadow(-3px 0 0 white) drop-shadow(0 3px 0 white) drop-shadow(0 -3px 0 white) drop-shadow(20px 0 0 black);
+    cursor: pointer; /* 클릭 가능함을 표시 */
+    transition: transform 0.1s ease;
+    position: relative;
+    pointer-events: auto;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+.character-image:active {
+    transform: scale(0.98); /* 클릭 시 약간 축소 효과 */
+}
+
+.controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+    z-index: 4;
+    transform: translateY(-50px); /* 위치만 위로 이동 */
+}
+
+.arrow-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    top: -200px;
+    position: relative;
+}
+
+.arrow-btn img {
+    width: auto;
+    height: auto;
+    display: block;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
+
+.arrow-btn:hover {
+    transform: scale(1.1);
+}
+
+.arrow-btn:active {
+    transform: scale(0.95);
+}
+
+.outfit-indicator {
+    font-weight: bold;
+    color: #fff;
+    min-width: 120px;
+    text-align: center;
+    border-radius: 20px;
+    font-size: 16px;
+    top: -15px;
+    position: relative;
+}
+
+.character-name-image {
+    width: auto;
+    height: auto;
+    top: 65px;
+    position: relative;
+    z-index: 5;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
