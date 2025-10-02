@@ -1,149 +1,199 @@
-// 클릭 사운드 초기화
-const clickSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/click_sound.mp3');
-clickSound.volume = 0.5; // 볼륨 설정 (0.0 ~ 1.0)
-
-// 캐릭터 클릭 사운드 초기화
-const characterSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/snd_movemenu.wav');
-characterSound.volume = 0.5;
-
-// 사운드 재생 함수
-function playClickSound() {
-    clickSound.currentTime = 0; // 재생 위치 리셋
-    clickSound.play().catch(e => console.log('Sound play failed:', e));
-}
-
-// 캐릭터 사운드 재생 함수
-function playCharacterSound() {
-    characterSound.currentTime = 0;
-    characterSound.play().catch(e => console.log('Character sound play failed:', e));
-}
-
-// 각 캐릭터의 현재 의상 인덱스
-const currentOutfit = {
-    whitney: 1,
-    ame: 1
-};
-
-// 각 캐릭터의 최대 의상 수
-const maxOutfits = {
-    whitney: 5,  // Whitney는 5개
-    ame: 8       // Ame는 8개
-};
-
-// 각 캐릭터의 의상 이름
-const outfitNames = {
-    whitney: {
-        1: '교복1',
-        2: '교복2',
-        3: '사복1',
-        4: '사복2',
-        5: 'if'
-    },
-    ame: {
-        1: '교복1',
-        2: '교복2',
-        3: '교복3',
-        4: '사복1',
-        5: '사복2',
-        6: '사복3',
-        7: '사복4',
-        8: 'if'
-    }
-};
-
-// nanagom 캐릭터 이미지 URL 설정
-const imageUrls = {
-    whitney: {
-        1: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_1.png',
-        2: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_2.png',
-        3: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_3.png',
-        4: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_4.png',
-        5: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_5.png'
-    },
-    ame: {
-        1: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_1.png',
-        2: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_2.png',
-        3: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_3.png',
-        4: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_4.png',
-        5: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_5.png',
-        6: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_6.png',
-        7: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_7.png',
-        8: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_8.png'
-    }
-};
-
-// 이미지 로드 시도 함수
-function loadCharacterImage(character, outfitNumber) {
-    const imageElement = document.getElementById(`${character}-image`);
+<!-- Whitney & Ame 캐릭터 옷장 치환 코드 -->
+<script>
+(function() {
+    'use strict';
     
-    if (imageUrls[character] && imageUrls[character][outfitNumber]) {
-        const img = new Image();
-        img.onload = function() {
-            imageElement.src = this.src;
-            imageElement.style.display = 'block';
-        };
-        img.onerror = function() {
-            // 이미지 로드 실패 시 빈 화면
-            imageElement.style.display = 'none';
-        };
-        img.src = imageUrls[character][outfitNumber];
-    }
-}
-
-// 이미지 전환
-function changeOutfitImage(character, outfitNumber) {
-    const imageElement = document.getElementById(`${character}-image`);
+    console.log('[whitame_nanagom] 스크립트 실행 시작');
     
-    if (imageUrls[character] && imageUrls[character][outfitNumber]) {
-        const img = new Image();
-        img.onload = function() {
-            imageElement.src = this.src;
-            imageElement.style.display = 'block';
-        };
-        img.onerror = function() {
-            imageElement.style.display = 'none';
-        };
-        img.src = imageUrls[character][outfitNumber];
+    // [whitame_nanagom] 텍스트를 찾아서 치환하는 함수
+    async function replaceWhitameNanagom() {
+        console.log('[whitame_nanagom] 치환 함수 실행');
+        
+        try {
+            // 본문 영역 찾기
+            const contentSelectors = [
+                '.entry-content',
+                '.tt_article_useless_p_margin',
+                'article',
+                '.post-content',
+                '.contents_style',
+                'body'  // 최후의 수단
+            ];
+            
+            let contentElement = null;
+            for (const selector of contentSelectors) {
+                contentElement = document.querySelector(selector);
+                if (contentElement) {
+                    console.log('[whitame_nanagom] 본문 영역 발견:', selector);
+                    break;
+                }
+            }
+            
+            if (!contentElement) {
+                console.error('[whitame_nanagom] 본문 영역을 찾을 수 없습니다.');
+                return;
+            }
+            
+            // HTML 전체에서 [whitame_nanagom] 텍스트 찾기
+            const bodyHTML = contentElement.innerHTML;
+            
+            if (!bodyHTML.includes('[whitame_nanagom]')) {
+                console.log('[whitame_nanagom] 텍스트를 찾을 수 없습니다.');
+                return;
+            }
+            
+            console.log('[whitame_nanagom] 텍스트 발견! 치환 시작...');
+            
+            // CSS 파일 추가 및 로드 대기
+            const loadResources = async () => {
+                const promises = [];
+                
+                // CSS 파일 추가 (중복 방지)
+                if (!document.querySelector('link[href*="whitame_nanagom@main/styles.css"]')) {
+                    const cssPromise = new Promise((resolve, reject) => {
+                        const cssLink = document.createElement('link');
+                        cssLink.rel = 'stylesheet';
+                        cssLink.href = 'https://cdn.jsdelivr.net/gh/Devi-ce/whitame_nanagom@main/styles.css';
+                        cssLink.onload = () => {
+                            console.log('[whitame_nanagom] CSS 로드 완료');
+                            resolve();
+                        };
+                        cssLink.onerror = reject;
+                        document.head.appendChild(cssLink);
+                    });
+                    promises.push(cssPromise);
+                }
+                
+                // 모든 리소스 로드 대기
+                if (promises.length > 0) {
+                    await Promise.all(promises);
+                    // CSS 적용을 위한 약간의 대기
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            };
+            
+            await loadResources();
+            
+            // Whitney & Ame 캐릭터 옷장 HTML
+            const whitameNanagomHTML = `
+<div class="nanagom-wardrobe">
+    <div class="nanagom-main-container">
+        <!-- 배경 레이어 -->
+        <div class="nanagom-background-layer"></div>
+        
+        <div class="nanagom-characters-container">
+            <!-- Whitney (왼쪽) -->
+            <div class="nanagom-character-section">
+                <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_name.png" class="nanagom-character-name-image" alt="Whitney">
+                <div class="nanagom-character-display">
+                    <div class="nanagom-character">
+                        <!-- 메인 이미지 -->
+                        <img id="nanagom-whitney-image" class="nanagom-character-image" alt="Whitney">
+                    </div>
+                </div>
+                <div class="nanagom-controls">
+                    <button class="nanagom-arrow-btn" onclick="changeNanagomOutfit('whitney', -1)">
+                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_prev.png" alt="Previous">
+                    </button>
+                    <div class="nanagom-outfit-indicator" id="nanagom-whitney-indicator">교복1</div>
+                    <button class="nanagom-arrow-btn" onclick="changeNanagomOutfit('whitney', 1)">
+                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_next.png" alt="Next">
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Ame (오른쪽) -->
+            <div class="nanagom-character-section">
+                <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_name.png" class="nanagom-character-name-image" alt="Ame">
+                <div class="nanagom-character-display">
+                    <div class="nanagom-character">
+                        <!-- 메인 이미지 -->
+                        <img id="nanagom-ame-image" class="nanagom-character-image" alt="Ame">
+                    </div>
+                </div>
+                <div class="nanagom-controls">
+                    <button class="nanagom-arrow-btn" onclick="changeNanagomOutfit('ame', -1)">
+                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_prev.png" alt="Previous">
+                    </button>
+                    <div class="nanagom-outfit-indicator" id="nanagom-ame-indicator">교복1</div>
+                    <button class="nanagom-arrow-btn" onclick="changeNanagomOutfit('ame', 1)">
+                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_next.png" alt="Next">
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- frame2 레이어 (맨 위) -->
+        <div class="nanagom-frame2-layer"></div>
+    </div>
+</div>
+`;
+            
+            // HTML 치환
+            const newHTML = bodyHTML.replace(/\[whitame_nanagom\]/g, whitameNanagomHTML);
+            contentElement.innerHTML = newHTML;
+            
+            console.log('[whitame_nanagom] HTML 치환 완료');
+            
+            // JavaScript 파일 로드 (중복 방지)
+            if (!document.querySelector('script[src*="whitame_nanagom@main/script.js"]')) {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/gh/Devi-ce/whitame_nanagom@main/script.js';
+                script.onload = function() {
+                    console.log('[whitame_nanagom] JavaScript 로드 완료');
+                    
+                    // 초기 이미지 로드를 위한 추가 호출
+                    setTimeout(() => {
+                        if (typeof loadNanagomCharacterImage === 'function') {
+                            loadNanagomCharacterImage('whitney', 1);
+                            loadNanagomCharacterImage('ame', 1);
+                            console.log('[whitame_nanagom] 초기 이미지 로드 시도');
+                        }
+                        
+                        // 캐릭터 이미지 클릭 이벤트 재설정
+                        const whitneyImg = document.getElementById('nanagom-whitney-image');
+                        const ameImg = document.getElementById('nanagom-ame-image');
+                        
+                        if (whitneyImg && typeof playNanagomCharacterSound === 'function') {
+                            whitneyImg.addEventListener('click', playNanagomCharacterSound);
+                        }
+                        if (ameImg && typeof playNanagomCharacterSound === 'function') {
+                            ameImg.addEventListener('click', playNanagomCharacterSound);
+                        }
+                        
+                        // 목차 재생성 (티스토리 목차 플러그인 사용 시)
+                        if (typeof makeToc === 'function') {
+                            const tocBox = document.getElementById('floating_toc');
+                            if (tocBox) {
+                                tocBox.innerHTML = '';
+                            }
+                            makeToc();
+                            console.log('[whitame_nanagom] 목차 재생성 완료');
+                        }
+                        
+                    }, 500);
+                };
+                script.onerror = function() {
+                    console.error('[whitame_nanagom] JavaScript 로드 실패');
+                };
+                document.body.appendChild(script);
+            }
+            
+            console.log('[whitame_nanagom] 치환 작업 완료');
+            
+        } catch (error) {
+            console.error('[whitame_nanagom] 치환 오류:', error);
+        }
     }
-}
-
-function changeOutfit(character, direction) {
-    // 클릭 사운드 재생
-    playClickSound();
     
-    // 현재 의상 인덱스 업데이트
-    currentOutfit[character] += direction;
-
-    // 범위 체크 (순환)
-    if (currentOutfit[character] > maxOutfits[character]) {
-        currentOutfit[character] = 1;
-    } else if (currentOutfit[character] < 1) {
-        currentOutfit[character] = maxOutfits[character];
+    // DOM 로드 완료 후 실행
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', replaceWhitameNanagom);
+        console.log('[whitame_nanagom] DOMContentLoaded 이벤트 대기 중');
+    } else {
+        replaceWhitameNanagom();
     }
-
-    // 이미지 즉시 전환
-    changeOutfitImage(character, currentOutfit[character]);
-
-    // 인디케이터를 의상 이름으로 업데이트
-    const indicatorElement = document.getElementById(`${character}-indicator`);
-    indicatorElement.textContent = outfitNames[character][currentOutfit[character]];
-}
-
-// 페이지 로드 시 초기 이미지 로드 시도
-window.addEventListener('load', () => {
-    loadCharacterImage('whitney', 1);
-    loadCharacterImage('ame', 1);
-});
-
-// 키보드 컨트롤 추가
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-        changeOutfit('whitney', -1);
-    } else if (e.key === 'ArrowRight') {
-        changeOutfit('whitney', 1);
-    } else if (e.key === 'a' || e.key === 'A') {
-        changeOutfit('ame', -1);
-    } else if (e.key === 'd' || e.key === 'D') {
-        changeOutfit('ame', 1);
-    }
-});
+    
+})();
+</script>
+<!-- Whitney & Ame 캐릭터 옷장 치환 코드 끝 -->
