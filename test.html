@@ -22,13 +22,17 @@
         }
 
         body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
             min-height: 100vh;
             background: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             touch-action: manipulation;
         }
 
@@ -37,11 +41,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100vw;
+            width: 100%;
             height: 100vh;
             position: relative;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
+            overflow: visible;
         }
 
         /* 메인 컨테이너 */
@@ -53,6 +58,7 @@
             align-items: center;
             position: relative;
             transform-origin: center center;
+            flex-shrink: 0;
         }
 
         /* 프레임2 */
@@ -341,79 +347,7 @@
             position: relative;
         }
 
-        /* 모바일 반응형 스타일 */
-        @media (max-width: 850px) {
-            .main-container {
-                transform: scale(0.9);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                transform: scale(0.8);
-            }
-        }
-
-        @media (max-width: 680px) {
-            .main-container {
-                transform: scale(0.7);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .main-container {
-                transform: scale(0.6);
-            }
-        }
-
-        @media (max-width: 520px) {
-            .main-container {
-                transform: scale(0.5);
-            }
-        }
-
-        @media (max-width: 440px) {
-            .main-container {
-                transform: scale(0.45);
-            }
-        }
-
-        @media (max-width: 400px) {
-            .main-container {
-                transform: scale(0.4);
-            }
-        }
-
-        @media (max-width: 360px) {
-            .main-container {
-                transform: scale(0.35);
-            }
-        }
-
-        /* 가로 모드 대응 */
-        @media (orientation: landscape) and (max-height: 700px) {
-            .main-container {
-                transform: scale(0.7);
-            }
-        }
-
-        @media (orientation: landscape) and (max-height: 600px) {
-            .main-container {
-                transform: scale(0.6);
-            }
-        }
-
-        @media (orientation: landscape) and (max-height: 500px) {
-            .main-container {
-                transform: scale(0.5);
-            }
-        }
-
-        @media (orientation: landscape) and (max-height: 400px) {
-            .main-container {
-                transform: scale(0.4);
-            }
-        }
+        /* 모바일 반응형 스타일 - 제거 (동적 스케일링이 대체) */
 
         /* 터치 디바이스 최적화 */
         @media (hover: none) and (pointer: coarse) {
@@ -683,17 +617,22 @@
             const containerWidth = 822;
             const containerHeight = 648;
             
-            // 패딩을 고려한 실제 사용 가능한 공간
-            const viewportWidth = wrapper.clientWidth - 40; // 좌우 패딩 20px씩
-            const viewportHeight = wrapper.clientHeight - 40; // 상하 패딩 20px씩
+            // window 크기 직접 사용 (더 정확한 뷰포트 계산)
+            const viewportWidth = window.innerWidth - 20; // 좌우 여백 10px씩
+            const viewportHeight = window.innerHeight - 20; // 상하 여백 10px씩
             
             const scaleX = viewportWidth / containerWidth;
             const scaleY = viewportHeight / containerHeight;
             
-            // 더 작은 비율을 선택하여 전체가 화면에 들어오도록 함
-            const scale = Math.min(scaleX, scaleY, 0.9) * 0.9; // 최대 90%의 90%까지만
+            // 가로세로 비율 중 작은 값을 선택 (전체가 화면에 들어오도록)
+            const scale = Math.min(scaleX, scaleY);
             
             container.style.transform = `scale(${scale})`;
+            
+            // 디버깅용 로그
+            console.log('Viewport:', viewportWidth, 'x', viewportHeight);
+            console.log('Container:', containerWidth, 'x', containerHeight);
+            console.log('Scale:', scale);
         }
 
         // 페이지 로드 시 스케일 조정
