@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>휱메 나나곰</title>
     <style>
         * {
@@ -18,15 +18,35 @@
             -moz-user-drag: none;
             -o-user-drag: none;
             user-drag: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
             min-height: 100vh;
             background: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            touch-action: manipulation;
+        }
+
+        /* 스케일 래퍼 */
+        .scale-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: visible;
         }
 
         /* 메인 컨테이너 */
@@ -37,6 +57,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            transform-origin: center center;
+            flex-shrink: 0;
         }
 
         /* 프레임2 */
@@ -50,7 +72,7 @@
             background-size: 822px 648px;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 100; /* 항상 최상위 */
+            z-index: 100;
             pointer-events: none;
         }
 
@@ -65,7 +87,7 @@
             background-size: 806px 592px;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 2; /* 배경보다 높고 캐릭터보다 낮음 */
+            z-index: 2;
             pointer-events: none;
             display: none;
         }
@@ -80,7 +102,7 @@
             background-size: 806px 592px;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 8; /* 캐릭터보다 높음 */
+            z-index: 8;
             pointer-events: none;
             display: none;
         }
@@ -95,7 +117,7 @@
             background-size: 806px 592px;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 8; /* deco_frame_2보다 낮고 캐릭터보다 높음 */
+            z-index: 8;
             pointer-events: none;
             display: none;
         }
@@ -158,6 +180,7 @@
             align-items: center;
             justify-content: center;
             gap: 1px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .deco-btn:hover {
@@ -193,6 +216,7 @@
             align-items: center;
             justify-content: center;
             margin-top: 12px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .save-btn svg {
@@ -264,10 +288,11 @@
             -moz-user-drag: none;
             -o-user-drag: none;
             user-drag: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .character-image:active {
-            transform: scale(0.98); /* 클릭 시 효과 */
+            transform: scale(0.98);
         }
 
         .controls {
@@ -287,6 +312,7 @@
             padding: 0;
             top: -200px;
             position: relative;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .arrow-btn img {
@@ -321,116 +347,99 @@
             position: relative;
         }
 
-        /* 반응형 */
-        @media (max-width: 768px) {
-            .game-iframe {
-                zoom: 0.5;
-                -moz-transform: scale(0.5);
-                -webkit-transform: scale(0.5);
-                transform: scale(0.5);
-            }
-        }
-        
-        @media (max-width: 560px) {
-            .game-iframe {
-                zoom: 0.4;
-                -moz-transform: scale(0.4);
-                -webkit-transform: scale(0.4);
-                transform: scale(0.4);
-            }
-        }
-        
-        /* 아주 작은 화면 (350px 이하) */
-        @media (max-width: 350px) {
-            .game-iframe {
-                zoom: 0.35;
-                -moz-transform: scale(0.35);
-                -webkit-transform: scale(0.35);
-                transform: scale(0.35);
+        /* 모바일 반응형 스타일 - 제거 (동적 스케일링이 대체) */
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .deco-btn, .save-btn, .arrow-btn {
+                min-width: 44px;
+                min-height: 44px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- 배경 레이어 -->
-        <div class="background-layer"></div>
-        
-        <!-- 데코 프레임 1 -->
-        <div class="deco-frame-1" id="deco-frame-1"></div>
-        
-        <!-- 데코 버튼 -->
-        <div class="deco-buttons">
-            <button class="deco-btn" id="deco-btn-1" onclick="toggleDecoFrame(1)">
-                <span>DECO</span>
-                <span>1</span>
-            </button>
-            <button class="deco-btn" id="deco-btn-2" onclick="toggleDecoFrame(2)">
-                <span>DECO</span>
-                <span>2</span>
-            </button>
-            <button class="deco-btn" id="deco-btn-3" onclick="toggleDecoFrame(3)">
-                <span>DECO</span>
-                <span>3</span>
-            </button>
-            <button class="save-btn" onclick="captureAndSave()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 16.5C13.6569 16.5 15 15.1569 15 13.5C15 11.8431 13.6569 10.5 12 10.5C10.3431 10.5 9 11.8431 9 13.5C9 15.1569 10.3431 16.5 12 16.5Z" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M2 12C2 9.19108 2 7.78661 2.67412 6.77772C2.96596 6.34096 3.34096 5.96596 3.77772 5.67412C4.78661 5 6.19108 5 9 5H15C17.8089 5 19.2134 5 20.2223 5.67412C20.659 5.96596 21.034 6.34096 21.3259 6.77772C22 7.78661 22 9.19108 22 12C22 14.8089 22 16.2134 21.3259 17.2223C21.034 17.659 20.659 18.034 20.2223 18.3259C19.2134 19 17.8089 19 15 19H9C6.19108 19 4.78661 19 3.77772 18.3259C3.34096 18.034 2.96596 17.659 2.67412 17.2223C2 16.2134 2 14.8089 2 12Z" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M15.5 5L15.4227 4.76584C15.0377 3.54275 14.8452 2.93121 14.4869 2.46558C14.1286 2 13.6488 2 12.6892 2H11.3108C10.3512 2 9.87139 2 9.51306 2.46558C9.15474 2.93121 8.96225 3.54275 8.57727 4.76584L8.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    <circle cx="18" cy="9" r="1" fill="currentColor"/>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="characters-container">
-            <!-- Whitney (왼쪽) -->
-            <div class="character-section">
-                <div class="character-display">
-                    <div class="character">
-                        <!-- 메인 이미지 -->
-                        <img id="whitney-image" class="character-image" alt="Whitney" onclick="playCharacterSound()">
+    <div class="scale-wrapper">
+        <div class="main-container">
+            <!-- 배경 레이어 -->
+            <div class="background-layer"></div>
+            
+            <!-- 데코 프레임 1 -->
+            <div class="deco-frame-1" id="deco-frame-1"></div>
+            
+            <!-- 데코 버튼 -->
+            <div class="deco-buttons">
+                <button class="deco-btn" id="deco-btn-1" onclick="toggleDecoFrame(1)">
+                    <span>DECO</span>
+                    <span>1</span>
+                </button>
+                <button class="deco-btn" id="deco-btn-2" onclick="toggleDecoFrame(2)">
+                    <span>DECO</span>
+                    <span>2</span>
+                </button>
+                <button class="deco-btn" id="deco-btn-3" onclick="toggleDecoFrame(3)">
+                    <span>DECO</span>
+                    <span>3</span>
+                </button>
+                <button class="save-btn" onclick="captureAndSave()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 16.5C13.6569 16.5 15 15.1569 15 13.5C15 11.8431 13.6569 10.5 12 10.5C10.3431 10.5 9 11.8431 9 13.5C9 15.1569 10.3431 16.5 12 16.5Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M2 12C2 9.19108 2 7.78661 2.67412 6.77772C2.96596 6.34096 3.34096 5.96596 3.77772 5.67412C4.78661 5 6.19108 5 9 5H15C17.8089 5 19.2134 5 20.2223 5.67412C20.659 5.96596 21.034 6.34096 21.3259 6.77772C22 7.78661 22 9.19108 22 12C22 14.8089 22 16.2134 21.3259 17.2223C21.034 17.659 20.659 18.034 20.2223 18.3259C19.2134 19 17.8089 19 15 19H9C6.19108 19 4.78661 19 3.77772 18.3259C3.34096 18.034 2.96596 17.659 2.67412 17.2223C2 16.2134 2 14.8089 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M15.5 5L15.4227 4.76584C15.0377 3.54275 14.8452 2.93121 14.4869 2.46558C14.1286 2 13.6488 2 12.6892 2H11.3108C10.3512 2 9.87139 2 9.51306 2.46558C9.15474 2.93121 8.96225 3.54275 8.57727 4.76584L8.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="18" cy="9" r="1" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="characters-container">
+                <!-- Whitney (왼쪽) -->
+                <div class="character-section">
+                    <div class="character-display">
+                        <div class="character">
+                            <!-- 메인 이미지 -->
+                            <img id="whitney-image" class="character-image" alt="Whitney" onclick="playCharacterSound()">
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button class="arrow-btn" onclick="changeOutfit('whitney', -1)">
+                            <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_prev.png" alt="Previous">
+                        </button>
+                        <div class="outfit-indicator" id="whitney-indicator">교복1</div>
+                        <button class="arrow-btn" onclick="changeOutfit('whitney', 1)">
+                            <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_next.png" alt="Next">
+                        </button>
                     </div>
                 </div>
-                <div class="controls">
-                    <button class="arrow-btn" onclick="changeOutfit('whitney', -1)">
-                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_prev.png" alt="Previous">
-                    </button>
-                    <div class="outfit-indicator" id="whitney-indicator">교복1</div>
-                    <button class="arrow-btn" onclick="changeOutfit('whitney', 1)">
-                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_next.png" alt="Next">
-                    </button>
-                </div>
-            </div>
 
-            <!-- Ame (오른쪽) -->
-            <div class="character-section">
-                <div class="character-display">
-                    <div class="character">
-                        <!-- 메인 이미지 -->
-                        <img id="ame-image" class="character-image" alt="Ame" onclick="playCharacterSound()">
+                <!-- Ame (오른쪽) -->
+                <div class="character-section">
+                    <div class="character-display">
+                        <div class="character">
+                            <!-- 메인 이미지 -->
+                            <img id="ame-image" class="character-image" alt="Ame" onclick="playCharacterSound()">
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button class="arrow-btn" onclick="changeOutfit('ame', -1)">
+                            <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_prev.png" alt="Previous">
+                        </button>
+                        <div class="outfit-indicator" id="ame-indicator">교복1</div>
+                        <button class="arrow-btn" onclick="changeOutfit('ame', 1)">
+                            <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_next.png" alt="Next">
+                        </button>
                     </div>
                 </div>
-                <div class="controls">
-                    <button class="arrow-btn" onclick="changeOutfit('ame', -1)">
-                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_prev.png" alt="Previous">
-                    </button>
-                    <div class="outfit-indicator" id="ame-indicator">교복1</div>
-                    <button class="arrow-btn" onclick="changeOutfit('ame', 1)">
-                        <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_next.png" alt="Next">
-                    </button>
-                </div>
             </div>
+            
+            <!-- 데코 프레임 3 -->
+            <div class="deco-frame-3" id="deco-frame-3"></div>
+            
+            <!-- 데코 프레임 2 -->
+            <div class="deco-frame-2" id="deco-frame-2"></div>
+            
+            <!-- frame2 레이어 (맨 위) -->
+            <div class="frame2-layer"></div>
         </div>
-        
-        <!-- 데코 프레임 3 -->
-        <div class="deco-frame-3" id="deco-frame-3"></div>
-        
-        <!-- 데코 프레임 2 -->
-        <div class="deco-frame-2" id="deco-frame-2"></div>
-        
-        <!-- frame2 레이어 (맨 위) -->
-        <div class="frame2-layer"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -600,10 +609,61 @@
             indicatorElement.textContent = outfitNames[character][currentOutfit[character]];
         }
 
+        // 동적 스케일링 함수
+        function adjustScale() {
+            const container = document.querySelector('.main-container');
+            const wrapper = document.querySelector('.scale-wrapper');
+            
+            const containerWidth = 822;
+            const containerHeight = 648;
+            
+            // window 크기 직접 사용 (더 정확한 뷰포트 계산)
+            const viewportWidth = window.innerWidth - 20; // 좌우 여백 10px씩
+            const viewportHeight = window.innerHeight - 20; // 상하 여백 10px씩
+            
+            const scaleX = viewportWidth / containerWidth;
+            const scaleY = viewportHeight / containerHeight;
+            
+            // 가로세로 비율 중 작은 값을 선택 (전체가 화면에 들어오도록)
+            const scale = Math.min(scaleX, scaleY);
+            
+            container.style.transform = `scale(${scale})`;
+            
+            // 디버깅용 로그
+            console.log('Viewport:', viewportWidth, 'x', viewportHeight);
+            console.log('Container:', containerWidth, 'x', containerHeight);
+            console.log('Scale:', scale);
+        }
+
+        // 페이지 로드 시 스케일 조정
         window.addEventListener('load', () => {
             loadCharacterImage('whitney', 1);
             loadCharacterImage('ame', 1);
+            adjustScale();
         });
+
+        // 화면 크기 변경 시 스케일 재조정
+        window.addEventListener('resize', adjustScale);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(adjustScale, 100);
+        });
+
+        // 터치 이벤트 지원
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 더블탭 줌 방지
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = new Date().getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
