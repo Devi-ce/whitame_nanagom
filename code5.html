@@ -618,7 +618,6 @@
             indicatorElement.textContent = outfitNames[character][currentOutfit[character]];
         }
 
-        // 동적 스케일링 함수
         function adjustScale() {
             const container = document.querySelector('.main-container');
             const wrapper = document.querySelector('.scale-wrapper');
@@ -632,7 +631,6 @@
                 return /KAKAOTALK|Twitter|FBAN|FBAV|Instagram|Line/i.test(ua);
             };
             
-            // visualViewport API 우선 사용 (더 정확한 뷰포트 정보)
             let viewportWidth, viewportHeight;
             
             if (window.visualViewport) {
@@ -667,21 +665,19 @@
             console.log('Scale:', scale);
         }
 
-        // 뷰포트 변경 감지 (인앱 브라우저 대응)
+        // 뷰포트 변경 감지
         function setupViewportListeners() {
             // 기본 이벤트 리스너
             window.addEventListener('resize', adjustScale);
             window.addEventListener('orientationchange', () => {
-                setTimeout(adjustScale, 300); // 회전 애니메이션 대기
+                setTimeout(adjustScale, 300);
             });
             
-            // visualViewport API 지원 시
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', adjustScale);
                 window.visualViewport.addEventListener('scroll', adjustScale);
             }
             
-            // 초기 실행 지연 (인앱 브라우저 로딩 대응)
             setTimeout(adjustScale, 100);
             setTimeout(adjustScale, 500);
         }
@@ -693,7 +689,6 @@
             setupViewportListeners();
         });
         
-        // DOM 준비 완료 시에도 실행 (더 빠른 초기화)
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', setupViewportListeners);
         } else {
