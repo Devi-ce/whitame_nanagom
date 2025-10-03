@@ -2,7 +2,11 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>휱메 나나곰</title>
     <style>
         * {
@@ -24,8 +28,9 @@
         body {
             margin: 0;
             padding: 0;
-            width: 100vw;
-            min-height: 100vh;
+            width: 100%;
+            height: 100vh;
+            height: -webkit-fill-available;
             background: #f0f0f0;
             display: flex;
             justify-content: center;
@@ -34,6 +39,9 @@
             overflow-x: hidden;
             overflow-y: auto;
             touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         /* 스케일 래퍼 */
@@ -43,8 +51,9 @@
             align-items: center;
             width: 100%;
             height: 100vh;
+            height: -webkit-fill-available;
             position: relative;
-            padding: 10px;
+            padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
             box-sizing: border-box;
             overflow: visible;
         }
@@ -617,36 +626,79 @@
             const containerWidth = 822;
             const containerHeight = 648;
             
-            // window 크기 직접 사용 (더 정확한 뷰포트 계산)
-            const viewportWidth = window.innerWidth - 20; // 좌우 여백 10px씩
-            const viewportHeight = window.innerHeight - 20; // 상하 여백 10px씩
+            // 인앱 브라우저 감지
+            const isInAppBrowser = () => {
+                const ua = navigator.userAgent || navigator.vendor || window.opera;
+                return /KAKAOTALK|Twitter|FBAN|FBAV|Instagram|Line/i.test(ua);
+            };
+            
+            // visualViewport API 우선 사용 (더 정확한 뷰포트 정보)
+            let viewportWidth, viewportHeight;
+            
+            if (window.visualViewport) {
+                viewportWidth = window.visualViewport.width - 20;
+                viewportHeight = window.visualViewport.height - 20;
+            } else {
+                // fallback
+                viewportWidth = Math.min(window.innerWidth, document.documentElement.clientWidth) - 20;
+                viewportHeight = Math.min(window.innerHeight, document.documentElement.clientHeight) - 20;
+            }
+            
+            // 인앱 브라우저일 경우 추가 여백
+            if (isInAppBrowser()) {
+                viewportWidth = viewportWidth * 0.95;
+                viewportHeight = viewportHeight * 0.95;
+            }
             
             const scaleX = viewportWidth / containerWidth;
             const scaleY = viewportHeight / containerHeight;
             
-            // 가로세로 비율 중 작은 값을 선택 (전체가 화면에 들어오도록)
+            // 가로세로 비율 중 작은 값을 선택
             const scale = Math.min(scaleX, scaleY);
             
+            // CSS 변환 적용
             container.style.transform = `scale(${scale})`;
+            container.style.webkitTransform = `scale(${scale})`; // Safari/WebView 호환성
             
             // 디버깅용 로그
+            console.log('User Agent:', navigator.userAgent);
+            console.log('In-App Browser:', isInAppBrowser());
             console.log('Viewport:', viewportWidth, 'x', viewportHeight);
-            console.log('Container:', containerWidth, 'x', containerHeight);
             console.log('Scale:', scale);
+        }
+
+        // 뷰포트 변경 감지 (인앱 브라우저 대응)
+        function setupViewportListeners() {
+            // 기본 이벤트 리스너
+            window.addEventListener('resize', adjustScale);
+            window.addEventListener('orientationchange', () => {
+                setTimeout(adjustScale, 300); // 회전 애니메이션 대기
+            });
+            
+            // visualViewport API 지원 시
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', adjustScale);
+                window.visualViewport.addEventListener('scroll', adjustScale);
+            }
+            
+            // 초기 실행 지연 (인앱 브라우저 로딩 대응)
+            setTimeout(adjustScale, 100);
+            setTimeout(adjustScale, 500);
         }
 
         // 페이지 로드 시 스케일 조정
         window.addEventListener('load', () => {
             loadCharacterImage('whitney', 1);
             loadCharacterImage('ame', 1);
-            adjustScale();
+            setupViewportListeners();
         });
-
-        // 화면 크기 변경 시 스케일 재조정
-        window.addEventListener('resize', adjustScale);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(adjustScale, 100);
-        });
+        
+        // DOM 준비 완료 시에도 실행 (더 빠른 초기화)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupViewportListeners);
+        } else {
+            setupViewportListeners();
+        }
 
         // 터치 이벤트 지원
         document.addEventListener('touchstart', function(e) {
