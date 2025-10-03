@@ -39,7 +39,7 @@
             position: relative;
         }
 
-        /* frame2 레이어 추가 */
+        /* frame2 레이어 추가 - 항상 최상위 */
         .frame2-layer {
             position: absolute;
             top: 0;
@@ -50,14 +50,60 @@
             background-size: 822px 648px;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 10;
+            z-index: 100; /* 항상 최상위 */
             pointer-events: none;
+        }
+
+        /* 데코 프레임 레이어들 - 모두 같은 위치로 조정 */
+        .deco-frame-1 {
+            position: absolute;
+            top: 10px; /* frame1과 동일한 top 값 */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/deco_frame_1.png');
+            background-size: 806px 592px; /* frame1과 동일한 크기 */
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 2; /* 배경보다 높고 캐릭터보다 낮음 */
+            pointer-events: none;
+            display: none;
+        }
+
+        .deco-frame-2 {
+            position: absolute;
+            top: 10px; /* frame1과 동일한 top 값 */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/deco_frame_2.png');
+            background-size: 806px 592px; /* frame1과 동일한 크기 */
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 9; /* 캐릭터보다 높음 */
+            pointer-events: none;
+            display: none;
+        }
+
+        .deco-frame-3 {
+            position: absolute;
+            top: 20px; /* frame1과 동일한 top 값 */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/deco_frame_3.png');
+            background-size: 806px 592px; /* frame1과 동일한 크기 */
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 8; /* deco_frame_2보다 낮고 캐릭터보다 높음 */
+            pointer-events: none;
+            display: none;
         }
 
         /* 원래 배경 이미지 레이어 */
         .background-layer {
             position: absolute;
-            top: 0;
+            top: 30px;
             left: 0;
             right: 0;
             bottom: 0;
@@ -66,25 +112,108 @@
             background-position: center;
             background-repeat: no-repeat;
             z-index: 1;
-            top: 30px;
             pointer-events: none;
         }
 
-        /* 프레임 이미지 추가 */
+        /* 프레임1 이미지 추가 */
         .main-container::after {
             content: '';
             position: absolute;
-            top: 0;
+            top: 30px;
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_frame.png');
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_frame1.png');
             background-size: 806px 592px;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 3;
-            top: 30px;
+            z-index: 8;
             pointer-events: none;
+        }
+
+        /* 데코 버튼 컨테이너 */
+        .deco-buttons {
+            position: absolute;
+            left: 20px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 50;
+        }
+
+        .deco-btn {
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 11px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+        }
+
+        .deco-btn:hover {
+            background: #f8f8f8;
+            transform: scale(1.05);
+        }
+
+        .deco-btn:active {
+            transform: scale(0.95);
+        }
+
+        .deco-btn.active {
+            background: #000000;
+            color: white;
+            border-color: #000000;
+        }
+
+        .deco-btn span {
+            font-size: 9px;
+        }
+
+        /* 저장 버튼 스타일 */
+        .save-btn {
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .save-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .save-btn:hover {
+            background: #333;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .save-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 캡쳐 시 숨길 요소들을 위한 클래스 */
+        .hide-on-capture {
+            opacity: 0 !important;
+            visibility: hidden !important;
         }
 
         .characters-container {
@@ -128,6 +257,7 @@
             cursor: pointer; /* 클릭 가능함을 표시 */
             transition: transform 0.1s ease;
             position: relative;
+            top: 10px;
             pointer-events: auto;
             -webkit-user-drag: none;
             -khtml-user-drag: none;
@@ -187,21 +317,9 @@
             border-radius: 20px;
             font-size: 16px;
             top: -15px;
+            z-index: 10;
             position: relative;
         }
-
-        .character-name-image {
-            width: auto;
-            height: auto;
-            top: 65px;
-            position: relative;
-            z-index: 5;
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
-            pointer-events: none;
 
         /* 반응형 조정 */
         @media (max-width: 768px) {
@@ -238,10 +356,36 @@
         <!-- 배경 레이어 -->
         <div class="background-layer"></div>
         
+        <!-- 데코 프레임 1 (낮은 인덱스) -->
+        <div class="deco-frame-1" id="deco-frame-1"></div>
+        
+        <!-- 데코 버튼들 -->
+        <div class="deco-buttons">
+            <button class="deco-btn" id="deco-btn-1" onclick="toggleDecoFrame(1)">
+                <span>DECO</span>
+                <span>1</span>
+            </button>
+            <button class="deco-btn" id="deco-btn-2" onclick="toggleDecoFrame(2)">
+                <span>DECO</span>
+                <span>2</span>
+            </button>
+            <button class="deco-btn" id="deco-btn-3" onclick="toggleDecoFrame(3)">
+                <span>DECO</span>
+                <span>3</span>
+            </button>
+            <button class="save-btn" onclick="captureAndSave()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16.5C13.6569 16.5 15 15.1569 15 13.5C15 11.8431 13.6569 10.5 12 10.5C10.3431 10.5 9 11.8431 9 13.5C9 15.1569 10.3431 16.5 12 16.5Z" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M2 12C2 9.19108 2 7.78661 2.67412 6.77772C2.96596 6.34096 3.34096 5.96596 3.77772 5.67412C4.78661 5 6.19108 5 9 5H15C17.8089 5 19.2134 5 20.2223 5.67412C20.659 5.96596 21.034 6.34096 21.3259 6.77772C22 7.78661 22 9.19108 22 12C22 14.8089 22 16.2134 21.3259 17.2223C21.034 17.659 20.659 18.034 20.2223 18.3259C19.2134 19 17.8089 19 15 19H9C6.19108 19 4.78661 19 3.77772 18.3259C3.34096 18.034 2.96596 17.659 2.67412 17.2223C2 16.2134 2 14.8089 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M15.5 5L15.4227 4.76584C15.0377 3.54275 14.8452 2.93121 14.4869 2.46558C14.1286 2 13.6488 2 12.6892 2H11.3108C10.3512 2 9.87139 2 9.51306 2.46558C9.15474 2.93121 8.96225 3.54275 8.57727 4.76584L8.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="18" cy="9" r="1" fill="currentColor"/>
+                </svg>
+            </button>
+        </div>
+        
         <div class="characters-container">
             <!-- Whitney (왼쪽) -->
             <div class="character-section">
-                <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_name.png" class="character-name-image" alt="Whitney">
                 <div class="character-display">
                     <div class="character">
                         <!-- 메인 이미지 -->
@@ -261,7 +405,6 @@
 
             <!-- Ame (오른쪽) -->
             <div class="character-section">
-                <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_name.png" class="character-name-image" alt="Ame">
                 <div class="character-display">
                     <div class="character">
                         <!-- 메인 이미지 -->
@@ -280,29 +423,85 @@
             </div>
         </div>
         
+        <!-- 데코 프레임 3 -->
+        <div class="deco-frame-3" id="deco-frame-3"></div>
+        
+        <!-- 데코 프레임 2 -->
+        <div class="deco-frame-2" id="deco-frame-2"></div>
+        
         <!-- frame2 레이어 (맨 위) -->
         <div class="frame2-layer"></div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // 클릭 사운드 초기화
-        const clickSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/click_sound.mp3');
-        clickSound.volume = 0.5; // 볼륨 설정 (0.0 ~ 1.0)
+        let clickSound;
+        let characterSound;
         
-        // 캐릭터 클릭 사운드 초기화
-        const characterSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/snd_movemenu.wav');
-        characterSound.volume = 0.5;
+        // 오디오 초기화 함수
+        function initAudio() {
+            clickSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/click_sound.mp3');
+            clickSound.volume = 0.5;
+            clickSound.preload = 'auto';
+            
+            characterSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/snd_movemenu.wav');
+            characterSound.volume = 0.5;
+            characterSound.preload = 'auto';
+        }
 
         // 사운드 재생 함수
         function playClickSound() {
-            clickSound.currentTime = 0; // 재생 위치 리셋
-            clickSound.play().catch(e => console.log('Sound play failed:', e));
+            if (!clickSound) {
+                initAudio();
+            }
+            // 새로운 Audio 인스턴스를 생성하여 중복 재생 가능하게 함
+            const sound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/click_sound.mp3');
+            sound.volume = 0.5;
+            sound.play().catch(e => {
+                console.log('Click sound play failed:', e);
+                // 실패 시 기존 방식으로 재시도
+                if (clickSound) {
+                    clickSound.currentTime = 0;
+                    clickSound.play().catch(err => console.log('Retry failed:', err));
+                }
+            });
         }
         
         // 캐릭터 사운드 재생 함수
         function playCharacterSound() {
-            characterSound.currentTime = 0;
-            characterSound.play().catch(e => console.log('Character sound play failed:', e));
+            if (!characterSound) {
+                initAudio();
+            }
+            const sound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/snd_movemenu.wav');
+            sound.volume = 0.5;
+            sound.play().catch(e => {
+                console.log('Character sound play failed:', e);
+                // 실패 시 기존 방식으로 재시도
+                if (characterSound) {
+                    characterSound.currentTime = 0;
+                    characterSound.play().catch(err => console.log('Retry failed:', err));
+                }
+            });
+        }
+        
+        // 페이지 로드 시 오디오 초기화
+        window.addEventListener('DOMContentLoaded', initAudio);
+
+        // 데코 프레임 토글 함수
+        function toggleDecoFrame(frameNumber) {
+            playClickSound();
+            
+            const frame = document.getElementById(`deco-frame-${frameNumber}`);
+            const button = document.getElementById(`deco-btn-${frameNumber}`);
+            
+            if (frame.style.display === 'block') {
+                frame.style.display = 'none';
+                button.classList.remove('active');
+            } else {
+                frame.style.display = 'block';
+                button.classList.add('active');
+            }
         }
 
         // 각 캐릭터의 현재 의상 인덱스
@@ -434,6 +633,55 @@
                 changeOutfit('ame', 1);
             }
         });
+
+        // 캡쳐 및 저장 함수
+        function captureAndSave() {
+            playClickSound();
+            
+            // 숨길 요소들 선택
+            const decoButtons = document.querySelector('.deco-buttons');
+            const controls = document.querySelectorAll('.controls');
+            
+            // 요소들 숨기기
+            decoButtons.classList.add('hide-on-capture');
+            controls.forEach(control => control.classList.add('hide-on-capture'));
+            
+            // 약간의 지연 후 캡쳐 (DOM 업데이트 대기)
+            setTimeout(() => {
+                const container = document.querySelector('.main-container');
+                
+                html2canvas(container, {
+                    backgroundColor: null,
+                    scale: 2, // 고화질을 위해 스케일 증가
+                    logging: false,
+                    useCORS: true, // CORS 이미지 처리
+                    allowTaint: true
+                }).then(canvas => {
+                    // 캡쳐된 이미지를 다운로드
+                    const link = document.createElement('a');
+                    const date = new Date();
+                    const timestamp = date.getFullYear() + 
+                                    String(date.getMonth() + 1).padStart(2, '0') + 
+                                    String(date.getDate()).padStart(2, '0') + '_' +
+                                    String(date.getHours()).padStart(2, '0') + 
+                                    String(date.getMinutes()).padStart(2, '0') + 
+                                    String(date.getSeconds()).padStart(2, '0');
+                    
+                    link.download = `whitame_nanagom_${timestamp}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    
+                    // 요소들 다시 보이기
+                    decoButtons.classList.remove('hide-on-capture');
+                    controls.forEach(control => control.classList.remove('hide-on-capture'));
+                }).catch(err => {
+                    console.error('캡쳐 실패:', err);
+                    // 에러 발생 시에도 요소들 다시 보이기
+                    decoButtons.classList.remove('hide-on-capture');
+                    controls.forEach(control => control.classList.remove('hide-on-capture'));
+                });
+            }, 100);
+        }
     </script>
 </body>
 </html>
