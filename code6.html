@@ -7,6 +7,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="format-detection" content="telephone=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 캐시 방지 메타 태그 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>휱메 나나곰</title>
     <style>
         * {
@@ -29,6 +33,7 @@
             margin: 0;
             padding: 0;
             width: 100%;
+            min-height: 100vh;
             height: 100vh;
             height: -webkit-fill-available;
             background: #f0f0f0;
@@ -42,6 +47,7 @@
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
             text-size-adjust: 100%;
+            position: relative;
         }
 
         /* 스케일 래퍼 */
@@ -65,7 +71,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(1);
             transform-origin: center center;
             flex-shrink: 0;
         }
@@ -356,8 +365,24 @@
             position: relative;
         }
 
-        /* 모바일 반응형 스타일 - 제거 (동적 스케일링이 대체) */
-
+        /* 데스크톱 전용 스타일 */
+        @media (min-width: 850px) and (pointer: fine) {
+            .main-container {
+                max-width: 822px;
+                max-height: 648px;
+            }
+            
+            body {
+                overflow: hidden; /* 데스크톱에서는 스크롤 불필요 */
+            }
+            
+            .scale-wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+        
         /* 터치 디바이스 최적화 */
         @media (hover: none) and (pointer: coarse) {
             .deco-btn, .save-btn, .arrow-btn {
@@ -453,6 +478,15 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
+        // 버전 관리 (캐시 갱신용)
+        const APP_VERSION = '1.0.1'; // 업데이트 시 이 버전 번호를 변경
+        console.log('App Version:', APP_VERSION);
+        
+        // 이미지 URL에 버전 추가
+        function addVersionToUrl(url) {
+            return `${url}?v=${APP_VERSION}`;
+        }
+        
         let clickSound;
         let characterSound;
         
@@ -545,24 +579,24 @@
             }
         };
 
-        // 캐릭터 이미지 소스
+        // 캐릭터 이미지 소스 (버전 관리 포함)
         const imageUrls = {
             whitney: {
-                1: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_1.png',
-                2: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_2.png',
-                3: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_3.png',
-                4: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_4.png',
-                5: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_5.png'
+                1: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_1.png'),
+                2: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_2.png'),
+                3: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_3.png'),
+                4: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_4.png'),
+                5: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_whitney_5.png')
             },
             ame: {
-                1: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_1.png',
-                2: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_2.png',
-                3: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_3.png',
-                4: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_4.png',
-                5: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_5.png',
-                6: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_6.png',
-                7: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_7.png',
-                8: 'https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_8.png'
+                1: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_1.png'),
+                2: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_2.png'),
+                3: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_3.png'),
+                4: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_4.png'),
+                5: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_5.png'),
+                6: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_6.png'),
+                7: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_7.png'),
+                8: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_ame_8.png')
             }
         };
 
@@ -618,6 +652,7 @@
             indicatorElement.textContent = outfitNames[character][currentOutfit[character]];
         }
 
+        // 동적 스케일링 함수
         function adjustScale() {
             const container = document.querySelector('.main-container');
             const wrapper = document.querySelector('.scale-wrapper');
@@ -625,19 +660,24 @@
             const containerWidth = 822;
             const containerHeight = 648;
             
+            // 디바이스 타입 감지
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth >= 768;
+            
             // 인앱 브라우저 감지
             const isInAppBrowser = () => {
                 const ua = navigator.userAgent || navigator.vendor || window.opera;
                 return /KAKAOTALK|Twitter|FBAN|FBAV|Instagram|Line/i.test(ua);
             };
             
+            // visualViewport API 우선 사용 (모바일용)
             let viewportWidth, viewportHeight;
             
-            if (window.visualViewport) {
+            if (isMobile && window.visualViewport) {
                 viewportWidth = window.visualViewport.width - 20;
                 viewportHeight = window.visualViewport.height - 20;
             } else {
-                // fallback
+                // 데스크톱 및 fallback
                 viewportWidth = Math.min(window.innerWidth, document.documentElement.clientWidth) - 20;
                 viewportHeight = Math.min(window.innerHeight, document.documentElement.clientHeight) - 20;
             }
@@ -651,15 +691,20 @@
             const scaleX = viewportWidth / containerWidth;
             const scaleY = viewportHeight / containerHeight;
             
-            // 가로세로 비율 중 작은 값을 선택
-            const scale = Math.min(scaleX, scaleY);
+            // 스케일 계산
+            let scale = Math.min(scaleX, scaleY);
             
-            // CSS 변환 적용
-            container.style.transform = `scale(${scale})`;
-            container.style.webkitTransform = `scale(${scale})`; // Safari/WebView 호환성
+            // 데스크톱에서는 최대 크기 제한
+            if (!isMobile && !isTablet) {
+                scale = Math.min(scale, 1); // 원본 크기 이상으로 확대하지 않음
+            }
+            
+            // CSS 변환 적용 - translate와 scale 함께 사용
+            container.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            container.style.webkitTransform = `translate(-50%, -50%) scale(${scale})`; // Safari/WebView 호환성
             
             // 디버깅용 로그
-            console.log('User Agent:', navigator.userAgent);
+            console.log('Device:', isMobile ? 'Mobile' : 'Desktop');
             console.log('In-App Browser:', isInAppBrowser());
             console.log('Viewport:', viewportWidth, 'x', viewportHeight);
             console.log('Scale:', scale);
@@ -670,14 +715,16 @@
             // 기본 이벤트 리스너
             window.addEventListener('resize', adjustScale);
             window.addEventListener('orientationchange', () => {
-                setTimeout(adjustScale, 300);
+                setTimeout(adjustScale, 300); // 회전 애니메이션 대기
             });
             
+            // visualViewport API 지원 시 (주로 모바일)
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', adjustScale);
                 window.visualViewport.addEventListener('scroll', adjustScale);
             }
             
+            // 초기 실행 지연 (인앱 브라우저 로딩 대응)
             setTimeout(adjustScale, 100);
             setTimeout(adjustScale, 500);
         }
@@ -689,6 +736,7 @@
             setupViewportListeners();
         });
         
+        // DOM 준비 완료 시에도 실행 (더 빠른 초기화)
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', setupViewportListeners);
         } else {
