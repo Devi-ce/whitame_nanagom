@@ -40,6 +40,8 @@
             width: 100vw;
             height: 100vh;
             position: relative;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         /* 메인 컨테이너 */
@@ -681,13 +683,15 @@
             const containerWidth = 822;
             const containerHeight = 648;
             
-            const viewportWidth = wrapper.clientWidth;
-            const viewportHeight = wrapper.clientHeight;
+            // 패딩을 고려한 실제 사용 가능한 공간
+            const viewportWidth = wrapper.clientWidth - 40; // 좌우 패딩 20px씩
+            const viewportHeight = wrapper.clientHeight - 40; // 상하 패딩 20px씩
             
             const scaleX = viewportWidth / containerWidth;
             const scaleY = viewportHeight / containerHeight;
             
-            const scale = Math.min(scaleX, scaleY, 1) * 0.95; // 최대 95%까지만 차지
+            // 더 작은 비율을 선택하여 전체가 화면에 들어오도록 함
+            const scale = Math.min(scaleX, scaleY, 0.9) * 0.9; // 최대 90%의 90%까지만
             
             container.style.transform = `scale(${scale})`;
         }
