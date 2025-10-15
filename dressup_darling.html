@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 캐시 방지 메타 태그 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>휱메 나나곰</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            height: 100vh;
+            height: -webkit-fill-available;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            position: relative;
+        }
+
+        /* 스케일 래퍼 */
+        .scale-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            height: -webkit-fill-available;
+            position: relative;
+            padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        /* 메인 컨테이너 - 모든 자식 요소의 포지션 안정화 */
+        .main-container {
+            width: 822px;
+            height: 648px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            transform-origin: center center;
+            flex-shrink: 0;
+            will-change: transform; /* GPU 가속 */
+        }
+
+        /* 프레임2 */
+        .frame2-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_frame2.png');
+            background-size: 822px 648px;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* 데코 프레임 레이어 */
+        .deco-frame-1 {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/deco_frame_1.png');
+            background-size: 806px 592px;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 2;
+            pointer-events: none;
+            display: none;
+        }
+
+        .deco-frame-2 {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/deco_frame_2.png');
+            background-size: 806px 592px;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 8;
+            pointer-events: none;
+            display: none;
+        }
+
+        .deco-frame-3 {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/deco_frame_3.png');
+            background-size: 806px 592px;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 8;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* 배경 이미지 레이어 */
+        .background-layer {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_background.png');
+            background-size: 806px 592px;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 프레임1 */
+        .main-container::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/nanagom_frame1.png');
+            background-size: 806px 592px;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 8;
+            pointer-events: none;
+        }
+
+        /* 하단 중앙 버튼 컨테이너 */
+        .bottom-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 50;
+        }
+
+        /* 왼쪽 옷입히기 버튼들 (Whitney) */
+        .left-dress-buttons {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 50;
+            width: 45px; /* 고정 너비 */
+        }
+
+        /* 오른쪽 옷입히기 버튼들 (Ame) - 버튼 수가 많아져서 gap을 줄임 */
+        .right-dress-buttons {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 50;
+            width: 45px; /* 고정 너비 */
+        }
+
+        .deco-btn, .dress-btn {
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            font-weight: bold;
+            font-size: 10px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            -webkit-tap-highlight-color: transparent;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dress-btn img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            transition: filter 0.3s ease;
+        }
+        
+        /* 로딩 상태를 위한 오버레이 */
+        .dress-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.6);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        
+        .dress-btn.loading::before {
+            opacity: 1;
+        }
+        
+        .dress-btn.loading {
+            cursor: wait;
+            pointer-events: none;
+        }
+
+        .deco-btn:active, .dress-btn:active:not(.loading) {
+            transform: scale(0.95);
+        }
+
+        .deco-btn.active, .dress-btn.active {
+            background: #000000;
+            color: white;
+            border-color: #000000;
+        }
+
+        /* 활성화된 버튼의 이미지 색상 반전 */
+        .dress-btn.active img {
+            filter: invert(1);
+        }
+
+        .deco-btn span, .dress-btn span {
+            font-size: 9px;
+        }
+
+        /* 저장 버튼 */
+        .save-btn {
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .save-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .save-btn:hover {
+            background: #333;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .save-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 의상 선택 프리뷰 */
+        .outfit-preview {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.98);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex; /* 항상 flex 유지 */
+            visibility: hidden; /* display 대신 visibility 사용 */
+            opacity: 0;
+            gap: 8px;
+            z-index: 60;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 60px;
+            max-width: 400px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease; /* 부드러운 전환 */
+        }
+
+        .outfit-preview.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .outfit-preview.left {
+            left: 80px;
+            flex-direction: row;
+        }
+
+        .outfit-preview.right {
+            right: 80px;
+            flex-direction: row-reverse;
+        }
+
+        .outfit-preview-title {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .outfit-item {
+            width: 50px;
+            height: 50px;
+            min-width: 50px; /* 고정 최소 너비 */
+            min-height: 50px; /* 고정 최소 높이 */
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0; /* 아이템 크기 고정 */
+        }
+
+        .outfit-item:hover {
+            transform: scale(1.1);
+            border-color: #333;
+            z-index: 1; /* hover 시 위로 올라오도록 */
+        }
+
+        .outfit-item.selected {
+            border-color: #000;
+            background: #f0f0f0;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .outfit-item img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            image-rendering: -webkit-optimize-contrast; /* 이미지 렌더링 최적화 */
+            image-rendering: crisp-edges;
+        }
+
+        .outfit-item.empty {
+            background: #f9f9f9;
+            color: #ccc;
+            font-size: 20px;
+        }
+
+        /* 캡쳐 시 숨길 요소 */
+        .hide-on-capture {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
+        .characters-container {
+            display: flex;
+            padding: 40px;
+            transform: translateY(10px);
+            position: relative;
+            z-index: 4;
+        }
+
+        .character-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .character-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .character {
+            position: relative;
+            top: -10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 전체 캐릭터(베이스+옷)에 외곽선 효과 적용 */
+            -webkit-filter: drop-shadow(3px 0 0 white) drop-shadow(-3px 0 0 white) drop-shadow(0 3px 0 white) drop-shadow(0 -3px 0 white) drop-shadow(20px 0 0 black);
+            filter: drop-shadow(3px 0 0 white) drop-shadow(-3px 0 0 white) drop-shadow(0 3px 0 white) drop-shadow(0 -3px 0 white) drop-shadow(20px 0 0 black);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        
+        .character:active {
+            transform: scale(0.98);
+        }
+
+        /* 캐릭터 베이스 이미지 - 원본 코드와 동일 */
+        .character-image {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            display: none;
+            transition: transform 0.1s ease;
+            position: relative;
+            top: 10px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .character-image:active {
+            transform: scale(0.98);
+        }
+
+        /* 의상 레이어 - 베이스와 같은 위치에 겹침 */
+        .clothing-image {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            display: none;
+            transition: transform 0.1s ease;
+            position: absolute;
+            top: 10px;
+            left: 0;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 액세서리 컨테이너 (여러 개 표시용) */
+        .accessory-container {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .accessory-image {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        /* 데스크톱 전용 스타일 */
+        @media (min-width: 850px) and (pointer: fine) {
+            .main-container {
+                max-width: 822px;
+                max-height: 648px;
+            }
+            
+            body {
+                overflow: hidden;
+            }
+            
+            .scale-wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+        
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .deco-btn, .dress-btn, .save-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scale-wrapper">
+        <div class="main-container">
+            <!-- 배경 레이어 -->
+            <div class="background-layer"></div>
+            
+            <!-- 데코 프레임 1 -->
+            <div class="deco-frame-1" id="deco-frame-1"></div>
+            
+            <!-- 왼쪽 옷입히기 버튼들 (Whitney) -->
+            <div class="left-dress-buttons">
+                <button class="dress-btn" id="whitney-top-btn" onclick="toggleOutfitPreview('whitney', 'top')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_top.png" alt="상의">
+                </button>
+                <button class="dress-btn" id="whitney-bottom-btn" onclick="toggleOutfitPreview('whitney', 'bottom')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_bottom.png" alt="하의">
+                </button>
+                <button class="dress-btn" id="whitney-shoes-btn" onclick="toggleOutfitPreview('whitney', 'shoes')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_shoes.png" alt="신발">
+                </button>
+                <button class="dress-btn" id="whitney-accessory-btn" onclick="toggleOutfitPreview('whitney', 'accessory')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_acc.png" alt="액세서리">
+                </button>
+            </div>
+            
+            <!-- 오른쪽 옷입히기 버튼들 (Ame) -->
+            <div class="right-dress-buttons">
+                <button class="dress-btn" id="ame-top-btn" onclick="toggleOutfitPreview('ame', 'top')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_top.png" alt="상의">
+                </button>
+                <button class="dress-btn" id="ame-bottom-btn" onclick="toggleOutfitPreview('ame', 'bottom')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_bottom.png" alt="하의">
+                </button>
+                <button class="dress-btn" id="ame-shoes-btn" onclick="toggleOutfitPreview('ame', 'shoes')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_shoes.png" alt="신발">
+                </button>
+                <button class="dress-btn" id="ame-accessory-btn" onclick="toggleOutfitPreview('ame', 'accessory')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_acc.png" alt="액세서리">
+                </button>
+                <button class="dress-btn" id="ame-necktie-btn" onclick="toggleOutfitPreview('ame', 'necktie')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_tie.png" alt="넥타이">
+                </button>
+                <button class="dress-btn" id="ame-outer-btn" onclick="toggleOutfitPreview('ame', 'outer')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_outer.png" alt="아우터">
+                </button>
+                <button class="dress-btn" id="ame-socks-btn" onclick="toggleOutfitPreview('ame', 'socks')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_sock.png" alt="양말">
+                </button>
+                <button class="dress-btn" id="ame-bangs-btn" onclick="toggleOutfitPreview('ame', 'bangs')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_bangs.png" alt="앞머리">
+                </button>
+                <button class="dress-btn" id="ame-hair-btn" onclick="toggleOutfitPreview('ame', 'hair')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_hair.png" alt="뒷머리">
+                </button>
+            </div>
+            
+            <!-- Whitney 상의 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-top-preview" style="top: calc(50% - 120px);">
+                <div class="outfit-preview-title">상의</div>
+            </div>
+            
+            <!-- Whitney 하의 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-bottom-preview" style="top: calc(50% - 60px);">
+                <div class="outfit-preview-title">하의</div>
+            </div>
+            
+            <!-- Whitney 신발 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-shoes-preview" style="top: calc(50% - 10px);">
+                <div class="outfit-preview-title">신발</div>
+            </div>
+            
+            <!-- Whitney 액세서리 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-accessory-preview" style="top: calc(50% + 40px);">
+                <div class="outfit-preview-title">액세서리</div>
+            </div>
+            
+            <!-- Ame 상의 프리뷰 -->
+            <div class="outfit-preview right" id="ame-top-preview" style="top: calc(50% - 250px);">
+                <div class="outfit-preview-title">상의</div>
+            </div>
+            
+            <!-- Ame 하의 프리뷰 -->
+            <div class="outfit-preview right" id="ame-bottom-preview" style="top: calc(50% - 195px);">
+                <div class="outfit-preview-title">하의</div>
+            </div>
+            
+            <!-- Ame 신발 프리뷰 -->
+            <div class="outfit-preview right" id="ame-shoes-preview" style="top: calc(50% - 150px);">
+                <div class="outfit-preview-title">신발</div>
+            </div>
+            
+            <!-- Ame 액세서리 프리뷰 -->
+            <div class="outfit-preview right" id="ame-accessory-preview" style="top: calc(50% - 85px);">
+                <div class="outfit-preview-title">액세서리</div>
+            </div>
+            
+            <!-- Ame 넥타이 프리뷰 -->
+            <div class="outfit-preview right" id="ame-necktie-preview" style="top: calc(50 -30px);">
+                <div class="outfit-preview-title">넥타이</div>
+            </div>
+            
+            <!-- Ame 아우터 프리뷰 -->
+            <div class="outfit-preview right" id="ame-outer-preview" style="top: calc(50% + 20px);">
+                <div class="outfit-preview-title">아우터</div>
+            </div>
+            
+            <!-- Ame 양말 프리뷰 -->
+            <div class="outfit-preview right" id="ame-socks-preview" style="top: calc(50% + 70px);">
+                <div class="outfit-preview-title">양말</div>
+            </div>
+            
+            <!-- Ame 앞머리 프리뷰 -->
+            <div class="outfit-preview right" id="ame-bangs-preview" style="top: calc(50% + 125px);">
+                <div class="outfit-preview-title">앞머리</div>
+            </div>
+            
+            <!-- Ame 뒷머리 프리뷰 -->
+            <div class="outfit-preview right" id="ame-hair-preview" style="top: calc(50% + 170px);">
+                <div class="outfit-preview-title">뒷머리</div>
+            </div>
+            
+            <!-- 하단 중앙 버튼들 -->
+            <div class="bottom-buttons">
+                <button class="deco-btn" id="deco-btn-1" onclick="toggleDecoFrame(1)">
+                    <span>DECO</span>
+                    <span>1</span>
+                </button>
+                <button class="deco-btn" id="deco-btn-2" onclick="toggleDecoFrame(2)">
+                    <span>DECO</span>
+                    <span>2</span>
+                </button>
+                <button class="deco-btn" id="deco-btn-3" onclick="toggleDecoFrame(3)">
+                    <span>DECO</span>
+                    <span>3</span>
+                </button>
+                <button class="save-btn" onclick="captureAndSave()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 16.5C13.6569 16.5 15 15.1569 15 13.5C15 11.8431 13.6569 10.5 12 10.5C10.3431 10.5 9 11.8431 9 13.5C9 15.1569 10.3431 16.5 12 16.5Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M2 12C2 9.19108 2 7.78661 2.67412 6.77772C2.96596 6.34096 3.34096 5.96596 3.77772 5.67412C4.78661 5 6.19108 5 9 5H15C17.8089 5 19.2134 5 20.2223 5.67412C20.659 5.96596 21.034 6.34096 21.3259 6.77772C22 7.78661 22 9.19108 22 12C22 14.8089 22 16.2134 21.3259 17.2223C21.034 17.659 20.659 18.034 20.2223 18.3259C19.2134 19 17.8089 19 15 19H9C6.19108 19 4.78661 19 3.77772 18.3259C3.34096 18.034 2.96596 17.659 2.67412 17.2223C2 16.2134 2 14.8089 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M15.5 5L15.4227 4.76584C15.0377 3.54275 14.8452 2.93121 14.4869 2.46558C14.1286 2 13.6488 2 12.6892 2H11.3108C10.3512 2 9.87139 2 9.51306 2.46558C9.15474 2.93121 8.96225 3.54275 8.57727 4.76584L8.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="18" cy="9" r="1" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="characters-container">
+                <!-- Whitney (왼쪽) -->
+                <div class="character-section">
+                    <div class="character-display">
+                        <div class="character" onclick="playCharacterSound()">
+                            <!-- 베이스 캐릭터 이미지 -->
+                            <img id="whitney-base" class="character-image" alt="Whitney Base">
+                            <!-- 하의 레이어 -->
+                            <img id="whitney-bottom" class="clothing-image" alt="Whitney Bottom">
+                            <!-- 신발 레이어 -->
+                            <img id="whitney-shoes" class="clothing-image" alt="Whitney Shoes">
+                            <!-- 상의 레이어 -->
+                            <img id="whitney-top" class="clothing-image" alt="Whitney Top">
+                            <!-- 액세서리 컨테이너 (여러 개) -->
+                            <div id="whitney-accessory-container" class="accessory-container"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ame (오른쪽) -->
+                <div class="character-section">
+                    <div class="character-display">
+                        <div class="character" onclick="playCharacterSound()">
+                            <!-- 뒷머리 레이어 (베이스보다 아래) -->
+                            <img id="ame-hair" class="clothing-image" alt="Ame Hair">
+                            <!-- 베이스 캐릭터 이미지 -->
+                            <img id="ame-base" class="character-image" alt="Ame Base">
+                            <!-- 양말 레이어 -->
+                            <img id="ame-socks" class="clothing-image" alt="Ame socks">
+                            <!-- 하의 레이어 -->
+                            <img id="ame-bottom" class="clothing-image" alt="Ame Bottom">
+                            <!-- 신발 레이어 -->
+                            <img id="ame-shoes" class="clothing-image" alt="Ame Shoes">
+                            <!-- 상의 레이어 -->
+                            <img id="ame-top" class="clothing-image" alt="Ame Top">
+                            <!-- 넥타이 레이어 -->
+                            <img id="ame-necktie" class="clothing-image" alt="Ame Necktie">
+                            <!-- 아우터 레이어 -->
+                            <img id="ame-outer" class="clothing-image" alt="Ame Outer">
+                            <!-- 앞머리 레이어 -->
+                            <img id="ame-bangs" class="clothing-image" alt="Ame Bangs">
+                            <!-- 액세서리 컨테이너 (여러 개) -->
+                            <div id="ame-accessory-container" class="accessory-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 데코 프레임 3 -->
+            <div class="deco-frame-3" id="deco-frame-3"></div>
+            
+            <!-- 데코 프레임 2 -->
+            <div class="deco-frame-2" id="deco-frame-2"></div>
+            
+            <!-- frame2 레이어 (맨 위) -->
+            <div class="frame2-layer"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 버전 관리 (캐시 갱신용)
+        const APP_VERSION = '3.3.0';
+        console.log('App Version:', APP_VERSION);
+        
+        // 이미지 URL에 버전 추가
+        function addVersionToUrl(url) {
+            return `${url}?v=${APP_VERSION}`;
+        }
+        
+        let clickSound;
+        let characterSound;
+        
+        function initAudio() {
+            clickSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/click_sound.mp3');
+            clickSound.volume = 0.5;
+            clickSound.preload = 'auto';
+            
+            characterSound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/snd_movemenu.wav');
+            characterSound.volume = 0.5;
+            characterSound.preload = 'auto';
+        }
+
+        function playClickSound() {
+            if (!clickSound) {
+                initAudio();
+            }
+            const sound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/click_sound.mp3');
+            sound.volume = 0.5;
+            sound.play().catch(e => {
+                console.log('Click sound play failed:', e);
+                if (clickSound) {
+                    clickSound.currentTime = 0;
+                    clickSound.play().catch(err => console.log('Retry failed:', err));
+                }
+            });
+        }
+        
+        function playCharacterSound() {
+            if (!characterSound) {
+                initAudio();
+            }
+            const sound = new Audio('https://raw.githubusercontent.com/Devi-ce/tistory/main/snd_movemenu.wav');
+            sound.volume = 0.5;
+            sound.play().catch(e => {
+                console.log('Character sound play failed:', e);
+                if (characterSound) {
+                    characterSound.currentTime = 0;
+                    characterSound.play().catch(err => console.log('Retry failed:', err));
+                }
+            });
+        }
+        
+        window.addEventListener('DOMContentLoaded', initAudio);
+
+        function toggleDecoFrame(frameNumber) {
+            playClickSound();
+            
+            const frame = document.getElementById(`deco-frame-${frameNumber}`);
+            const button = document.getElementById(`deco-btn-${frameNumber}`);
+            
+            if (frame.style.display === 'block') {
+                frame.style.display = 'none';
+                button.classList.remove('active');
+            } else {
+                frame.style.display = 'block';
+                button.classList.add('active');
+            }
+        }
+
+        // 현재 의상 상태 - 액세서리는 배열로 변경
+        const currentClothing = {
+            whitney: {
+                top: 0,
+                bottom: 0,
+                shoes: 0,
+                accessory: [] // 배열로 변경
+            },
+            ame: {
+                top: 0,
+                bottom: 0,
+                shoes: 0,
+                accessory: [], // 배열로 변경
+                necktie: 0,
+                outer: 0,
+                socks: 0,
+                bangs: 1, // 앞머리 기본값 1
+                hair: 1  // 뒷머리 기본값 1
+            }
+        };
+
+        // 각 파츠별 최대 개수
+        const maxClothing = {
+            whitney: {
+                top: 15,
+                bottom: 15,
+                shoes: 10,
+                accessory: 15
+            },
+            ame: {
+                top: 20,
+                bottom: 20,
+                shoes: 15,
+                accessory: 15,
+                necktie: 10,
+                outer: 10,
+                socks: 10,
+                bangs: 10,  // 앞머리 최대 개수
+                hair: 10    // 뒷머리 최대 개수
+            }
+        };
+
+        // 베이스 캐릭터 이미지 URL
+        const baseImageUrls = {
+            whitney: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/whitney_base.png'),
+            ame: addVersionToUrl('https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/ame_base.png')
+        };
+
+        // 의상 이미지 URL 생성 함수
+        function getClothingImageUrl(character, type, number) {
+            const fileType = type === 'accessory' ? 'acc' : type;
+            return addVersionToUrl(`https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/${character}_${fileType}_${number}.png`);
+        }
+
+        // 아이콘 이미지 URL 생성 함수
+        function getIconImageUrl(character, type, number) {
+            const fileType = type === 'accessory' ? 'acc' : type;
+            return addVersionToUrl(`https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/${character}_${fileType}_${number}_icon.png`);
+        }
+
+        // 페이지 로드 시 모든 프리뷰 미리 생성
+        function preloadAllPreviews() {
+            // Whitney 프리뷰
+            ['top', 'bottom', 'shoes', 'accessory'].forEach(type => {
+                const preview = document.getElementById(`whitney-${type}-preview`);
+                if (preview) {
+                    createPreviewItems('whitney', type, preview);
+                }
+            });
+            
+            // Ame 프리뷰
+            ['top', 'bottom', 'shoes', 'accessory', 'necktie', 'outer', 'socks', 'bangs', 'hair'].forEach(type => {
+                const preview = document.getElementById(`ame-${type}-preview`);
+                if (preview) {
+                    createPreviewItems('ame', type, preview);
+                }
+            });
+        }
+        
+        // 의상 프리뷰 토글 (매우 단순화)
+        function toggleOutfitPreview(character, type) {
+            playClickSound();
+            
+            const button = document.getElementById(`${character}-${type}-btn`);
+            const preview = document.getElementById(`${character}-${type}-preview`);
+            
+            // 현재 버튼이 활성화되어 있으면 비활성화
+            if (button.classList.contains('active')) {
+                preview.classList.remove('show');
+                button.classList.remove('active');
+                return;
+            }
+            
+            // 같은 캐릭터의 다른 프리뷰와 버튼만 비활성화
+            if (character === 'whitney') {
+                ['top', 'bottom', 'shoes', 'accessory'].forEach(partType => {
+                    if (partType !== type) {
+                        const otherButton = document.getElementById(`whitney-${partType}-btn`);
+                        const otherPreview = document.getElementById(`whitney-${partType}-preview`);
+                        if (otherButton) otherButton.classList.remove('active');
+                        if (otherPreview) otherPreview.classList.remove('show');
+                    }
+                });
+            } else if (character === 'ame') {
+                ['top', 'bottom', 'shoes', 'accessory', 'necktie', 'outer', 'socks', 'bangs', 'hair'].forEach(partType => {
+                    if (partType !== type) {
+                        const otherButton = document.getElementById(`ame-${partType}-btn`);
+                        const otherPreview = document.getElementById(`ame-${partType}-preview`);
+                        if (otherButton) otherButton.classList.remove('active');
+                        if (otherPreview) otherPreview.classList.remove('show');
+                    }
+                });
+            }
+            
+            // 선택 상태 업데이트
+            updatePreviewSelection(character, type, preview);
+            
+            // 프리뷰 표시
+            preview.classList.add('show');
+            button.classList.add('active');
+        }
+        
+        // 프리뷰 선택 상태만 업데이트
+        function updatePreviewSelection(character, type, container) {
+            const items = container.querySelectorAll('.outfit-item');
+            items.forEach((item, idx) => {
+                if (type === 'accessory') {
+                    const number = idx + 1;
+                    if (currentClothing[character].accessory.includes(number)) {
+                        item.classList.add('selected');
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                } else {
+                    if (item.classList.contains('empty')) {
+                        if (currentClothing[character][type] === 0) {
+                            item.classList.add('selected');
+                        } else {
+                            item.classList.remove('selected');
+                        }
+                    } else {
+                        const number = item.classList.contains('empty') ? 0 : 
+                                     container.querySelector('.empty') ? idx : idx + 1;
+                        if (currentClothing[character][type] === number) {
+                            item.classList.add('selected');
+                        } else {
+                            item.classList.remove('selected');
+                        }
+                    }
+                }
+            });
+        }
+
+        // 프리뷰 아이템 생성 (한 번만 생성) - 아이콘 이미지 사용
+        function createPreviewItems(character, type, container) {
+            // 이미 생성되어 있으면 스킵
+            if (container.dataset.initialized === 'true') {
+                return;
+            }
+            
+            const fragment = document.createDocumentFragment();
+            
+            if (type !== 'accessory') {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = 'outfit-item empty';
+                emptyItem.innerHTML = '✕';
+                emptyItem.onclick = () => {
+                    selectClothing(character, type, 0);
+                    updatePreviewSelection(character, type, container);
+                };
+                if (currentClothing[character][type] === 0) {
+                    emptyItem.classList.add('selected');
+                }
+                fragment.appendChild(emptyItem);
+            }
+            
+            for (let i = 1; i <= maxClothing[character][type]; i++) {
+                const item = document.createElement('div');
+                item.className = 'outfit-item';
+                item.dataset.number = i;
+                
+                const img = document.createElement('img');
+                // 아이콘 이미지 사용
+                img.src = getIconImageUrl(character, type, i);
+                img.onerror = () => {
+                    // 아이콘이 없으면 원본 이미지 사용 (폴백)
+                    img.src = getClothingImageUrl(character, type, i);
+                    img.onerror = () => {
+                        item.style.display = 'none';
+                    };
+                };
+                
+                item.appendChild(img);
+                
+                if (type === 'accessory') {
+                    item.onclick = () => {
+                        toggleAccessory(character, i);
+                        updatePreviewSelection(character, type, container);
+                    };
+                    if (currentClothing[character].accessory.includes(i)) {
+                        item.classList.add('selected');
+                    }
+                } else {
+                    item.onclick = () => {
+                        selectClothing(character, type, i);
+                        updatePreviewSelection(character, type, container);
+                    };
+                    if (currentClothing[character][type] === i) {
+                        item.classList.add('selected');
+                    }
+                }
+                
+                fragment.appendChild(item);
+            }
+            
+            container.appendChild(fragment);
+            container.dataset.initialized = 'true';
+        }
+
+        // 액세서리 토글 함수
+        function toggleAccessory(character, number) {
+            playClickSound();
+            
+            const accessories = currentClothing[character].accessory;
+            const index = accessories.indexOf(number);
+            
+            if (index > -1) {
+                // 이미 선택된 경우 제거
+                accessories.splice(index, 1);
+            } else {
+                // 선택되지 않은 경우 추가
+                accessories.push(number);
+            }
+            
+            updateAccessories(character);
+            
+            // 프리뷰 업데이트
+            const preview = document.getElementById(`${character}-accessory-preview`);
+            if (preview.classList.contains('show')) {
+                createPreviewItems(character, 'accessory', preview);
+            }
+        }
+
+        // 액세서리 업데이트 함수
+        function updateAccessories(character) {
+            const container = document.getElementById(`${character}-accessory-container`);
+            
+            // 기존 액세서리 이미지 모두 제거
+            container.innerHTML = '';
+            
+            // 선택된 액세서리들 추가
+            currentClothing[character].accessory.forEach(number => {
+                const img = document.createElement('img');
+                img.className = 'accessory-image';
+                img.src = getClothingImageUrl(character, 'accessory', number);
+                img.style.display = 'block';
+                img.onerror = () => {
+                    img.style.display = 'none';
+                };
+                container.appendChild(img);
+            });
+        }
+
+        // 의상 선택
+        function selectClothing(character, type, number) {
+            playClickSound();
+            
+            currentClothing[character][type] = number;
+            updateClothingImage(character, type);
+            
+            // 프리뷰 업데이트
+            const preview = document.getElementById(`${character}-${type}-preview`);
+            if (preview.classList.contains('show')) {
+                createPreviewItems(character, type, preview);
+            }
+        }
+
+        // 의상 이미지 업데이트
+        function updateClothingImage(character, type) {
+            const imageElement = document.getElementById(`${character}-${type}`);
+            
+            if (currentClothing[character][type] === 0) {
+                imageElement.style.display = 'none';
+                return;
+            }
+            
+            const imageUrl = getClothingImageUrl(character, type, currentClothing[character][type]);
+            
+            const img = new Image();
+            img.onload = function() {
+                imageElement.src = this.src;
+                imageElement.style.display = 'block';
+            };
+            img.onerror = function() {
+                console.log(`Failed to load: ${imageUrl}`);
+                imageElement.style.display = 'none';
+            };
+            img.src = imageUrl;
+        }
+
+        // 베이스 캐릭터 이미지 로드
+        function loadBaseCharacter(character) {
+            const imageElement = document.getElementById(`${character}-base`);
+            const imageUrl = baseImageUrls[character];
+            
+            const img = new Image();
+            img.onload = function() {
+                imageElement.src = this.src;
+                imageElement.style.display = 'block';
+            };
+            img.onerror = function() {
+                imageElement.style.display = 'none';
+            };
+            img.src = imageUrl;
+        }
+
+        // 초기 의상 로드
+        function loadInitialClothing() {
+            ['whitney', 'ame'].forEach(character => {
+                const types = character === 'whitney' 
+                    ? ['top', 'bottom', 'shoes']
+                    : ['top', 'bottom', 'shoes', 'necktie', 'outer', 'socks', 'bangs', 'hair'];
+                
+                types.forEach(type => {
+                    const element = document.getElementById(`${character}-${type}`);
+                    if (element) {
+                        // Ame의 앞머리와 뒷머리는 기본적으로 1번 표시
+                        if (character === 'ame' && (type === 'bangs' || type === 'hair')) {
+                            updateClothingImage(character, type);
+                        } else {
+                            element.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+
+        // 동적 스케일링 함수
+        function adjustScale() {
+            const container = document.querySelector('.main-container');
+            const wrapper = document.querySelector('.scale-wrapper');
+            
+            const containerWidth = 822;
+            const containerHeight = 648;
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth >= 768;
+            
+            const isInAppBrowser = () => {
+                const ua = navigator.userAgent || navigator.vendor || window.opera;
+                return /KAKAOTALK|Twitter|FBAN|FBAV|Instagram|Line/i.test(ua);
+            };
+            
+            let viewportWidth, viewportHeight;
+            
+            if (isMobile && window.visualViewport) {
+                viewportWidth = window.visualViewport.width - 20;
+                viewportHeight = window.visualViewport.height - 20;
+            } else {
+                viewportWidth = Math.min(window.innerWidth, document.documentElement.clientWidth) - 20;
+                viewportHeight = Math.min(window.innerHeight, document.documentElement.clientHeight) - 20;
+            }
+            
+            if (isInAppBrowser()) {
+                viewportWidth = viewportWidth * 0.95;
+                viewportHeight = viewportHeight * 0.95;
+            }
+            
+            const scaleX = viewportWidth / containerWidth;
+            const scaleY = viewportHeight / containerHeight;
+            
+            let scale = Math.min(scaleX, scaleY);
+            
+            if (!isMobile && !isTablet) {
+                scale = Math.min(scale, 1);
+            }
+            
+            container.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            container.style.webkitTransform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
+        // 뷰포트 변경 감지
+        function setupViewportListeners() {
+            window.addEventListener('resize', adjustScale);
+            window.addEventListener('orientationchange', () => {
+                setTimeout(adjustScale, 300);
+            });
+            
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', adjustScale);
+                window.visualViewport.addEventListener('scroll', adjustScale);
+            }
+            
+            setTimeout(adjustScale, 100);
+            setTimeout(adjustScale, 500);
+        }
+
+        // 페이지 로드 시 스케일 조정 및 초기화
+        window.addEventListener('load', () => {
+            loadBaseCharacter('whitney');
+            loadBaseCharacter('ame');
+            loadInitialClothing();
+            
+            // 모든 프리뷰를 미리 생성 (숨겨진 상태로)
+            setTimeout(() => {
+                preloadAllPreviews();
+            }, 100);
+            
+            setupViewportListeners();
+        });
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupViewportListeners);
+        } else {
+            setupViewportListeners();
+        }
+
+        // 터치 이벤트 지원
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 더블탭 줌 방지
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = new Date().getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // 캡쳐 및 저장 함수
+        function captureAndSave() {
+            playClickSound();
+            
+            const bottomButtons = document.querySelector('.bottom-buttons');
+            const leftDressButtons = document.querySelector('.left-dress-buttons');
+            const rightDressButtons = document.querySelector('.right-dress-buttons');
+            const outfitPreviews = document.querySelectorAll('.outfit-preview');
+            
+            bottomButtons.classList.add('hide-on-capture');
+            leftDressButtons.classList.add('hide-on-capture');
+            rightDressButtons.classList.add('hide-on-capture');
+            outfitPreviews.forEach(preview => preview.classList.add('hide-on-capture'));
+            
+            setTimeout(() => {
+                const container = document.querySelector('.main-container');
+                
+                html2canvas(container, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    const date = new Date();
+                    const timestamp = date.getFullYear() + 
+                                    String(date.getMonth() + 1).padStart(2, '0') + 
+                                    String(date.getDate()).padStart(2, '0') + '_' +
+                                    String(date.getHours()).padStart(2, '0') + 
+                                    String(date.getMinutes()).padStart(2, '0') + 
+                                    String(date.getSeconds()).padStart(2, '0');
+                    
+                    link.download = `whitame_nanagom_${timestamp}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    
+                    bottomButtons.classList.remove('hide-on-capture');
+                    leftDressButtons.classList.remove('hide-on-capture');
+                    rightDressButtons.classList.remove('hide-on-capture');
+                    outfitPreviews.forEach(preview => preview.classList.remove('hide-on-capture'));
+                }).catch(err => {
+                    console.error('캡쳐 실패:', err);
+                    bottomButtons.classList.remove('hide-on-capture');
+                    leftDressButtons.classList.remove('hide-on-capture');
+                    rightDressButtons.classList.remove('hide-on-capture');
+                    outfitPreviews.forEach(preview => preview.classList.remove('hide-on-capture'));
+                });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
