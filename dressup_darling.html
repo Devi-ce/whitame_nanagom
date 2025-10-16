@@ -183,7 +183,7 @@
             z-index: 50;
         }
 
-        /* 왼쪽 옷입히기 버튼들 (Whitney) */
+        /* 왼쪽 옷입히기 버튼들 (Whitney) - 버튼 수가 많아져서 gap을 줄임 */
         .left-dress-buttons {
             position: absolute;
             left: 20px;
@@ -191,7 +191,7 @@
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             z-index: 50;
             width: 45px; /* 고정 너비 */
         }
@@ -563,6 +563,12 @@
                 <button class="dress-btn" id="whitney-accessory-btn" onclick="toggleOutfitPreview('whitney', 'accessory')">
                     <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_acc.png" alt="액세서리">
                 </button>
+                <button class="dress-btn" id="whitney-bangs-btn" onclick="toggleOutfitPreview('whitney', 'bangs')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_bangs.png" alt="앞머리">
+                </button>
+                <button class="dress-btn" id="whitney-hair-btn" onclick="toggleOutfitPreview('whitney', 'hair')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_hair.png" alt="뒷머리">
+                </button>
             </div>
             
             <!-- 오른쪽 옷입히기 버튼들 (Ame) -->
@@ -597,23 +603,33 @@
             </div>
             
             <!-- Whitney 상의 프리뷰 -->
-            <div class="outfit-preview left" id="whitney-top-preview" style="top: calc(50% - 120px);">
+            <div class="outfit-preview left" id="whitney-top-preview" style="top: calc(50% - 180px);">
                 <div class="outfit-preview-title">상의</div>
             </div>
             
             <!-- Whitney 하의 프리뷰 -->
-            <div class="outfit-preview left" id="whitney-bottom-preview" style="top: calc(50% - 60px);">
+            <div class="outfit-preview left" id="whitney-bottom-preview" style="top: calc(50% - 120px);">
                 <div class="outfit-preview-title">하의</div>
             </div>
             
             <!-- Whitney 신발 프리뷰 -->
-            <div class="outfit-preview left" id="whitney-shoes-preview" style="top: calc(50% - 10px);">
+            <div class="outfit-preview left" id="whitney-shoes-preview" style="top: calc(50% - 60px);">
                 <div class="outfit-preview-title">신발</div>
             </div>
             
             <!-- Whitney 액세서리 프리뷰 -->
-            <div class="outfit-preview left" id="whitney-accessory-preview" style="top: calc(50% + 40px);">
+            <div class="outfit-preview left" id="whitney-accessory-preview" style="top: calc(50% + 0px);">
                 <div class="outfit-preview-title">액세서리</div>
+            </div>
+            
+            <!-- Whitney 앞머리 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-bangs-preview" style="top: calc(50% + 60px);">
+                <div class="outfit-preview-title">앞머리</div>
+            </div>
+            
+            <!-- Whitney 뒷머리 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-hair-preview" style="top: calc(50% + 120px);">
+                <div class="outfit-preview-title">뒷머리</div>
             </div>
             
             <!-- Ame 상의 프리뷰 -->
@@ -637,7 +653,7 @@
             </div>
             
             <!-- Ame 넥타이 프리뷰 -->
-            <div class="outfit-preview right" id="ame-necktie-preview" style="top: calc(50 -30px);">
+            <div class="outfit-preview right" id="ame-necktie-preview" style="top: calc(50% - 30px);">
                 <div class="outfit-preview-title">넥타이</div>
             </div>
             
@@ -690,6 +706,8 @@
                 <div class="character-section">
                     <div class="character-display">
                         <div class="character" onclick="playCharacterSound()">
+                            <!-- 뒷머리 레이어 (베이스보다 아래) -->
+                            <img id="whitney-hair" class="clothing-image" alt="Whitney Hair">
                             <!-- 베이스 캐릭터 이미지 -->
                             <img id="whitney-base" class="character-image" alt="Whitney Base">
                             <!-- 하의 레이어 -->
@@ -698,6 +716,8 @@
                             <img id="whitney-shoes" class="clothing-image" alt="Whitney Shoes">
                             <!-- 상의 레이어 -->
                             <img id="whitney-top" class="clothing-image" alt="Whitney Top">
+                            <!-- 앞머리 레이어 -->
+                            <img id="whitney-bangs" class="clothing-image" alt="Whitney Bangs">
                             <!-- 액세서리 컨테이너 (여러 개) -->
                             <div id="whitney-accessory-container" class="accessory-container"></div>
                         </div>
@@ -747,7 +767,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // 버전 관리 (캐시 갱신용)
-        const APP_VERSION = '3.3.3';
+        const APP_VERSION = '3.4.0';
         console.log('App Version:', APP_VERSION);
         
         // 이미지 URL에 버전 추가
@@ -815,13 +835,15 @@
             }
         }
 
-        // 현재 의상 상태 - 액세서리는 배열로 변경
+        // 현재 의상 상태 - 액세서리는 배열로 변경, Whitney에도 bangs와 hair 추가
         const currentClothing = {
             whitney: {
                 top: 0,
                 bottom: 0,
                 shoes: 0,
-                accessory: [] // 배열로 변경
+                accessory: [], // 배열로 변경
+                bangs: 1, // 앞머리 기본값 1
+                hair: 1  // 뒷머리 기본값 1
             },
             ame: {
                 top: 0,
@@ -836,13 +858,15 @@
             }
         };
 
-        // 각 파츠별 최대 개수
+        // 각 파츠별 최대 개수 - Whitney에도 bangs와 hair 추가
         const maxClothing = {
             whitney: {
                 top: 15,
                 bottom: 15,
                 shoes: 10,
-                accessory: 15
+                accessory: 15,
+                bangs: 10,  // Whitney 앞머리 최대 개수
+                hair: 10    // Whitney 뒷머리 최대 개수
             },
             ame: {
                 top: 20,
@@ -877,8 +901,8 @@
 
         // 페이지 로드 시 모든 프리뷰 미리 생성
         function preloadAllPreviews() {
-            // Whitney 프리뷰
-            ['top', 'bottom', 'shoes', 'accessory'].forEach(type => {
+            // Whitney 프리뷰 - bangs와 hair 추가
+            ['top', 'bottom', 'shoes', 'accessory', 'bangs', 'hair'].forEach(type => {
                 const preview = document.getElementById(`whitney-${type}-preview`);
                 if (preview) {
                     createPreviewItems('whitney', type, preview);
@@ -910,7 +934,7 @@
             
             // 같은 캐릭터의 다른 프리뷰와 버튼만 비활성화
             if (character === 'whitney') {
-                ['top', 'bottom', 'shoes', 'accessory'].forEach(partType => {
+                ['top', 'bottom', 'shoes', 'accessory', 'bangs', 'hair'].forEach(partType => {
                     if (partType !== type) {
                         const otherButton = document.getElementById(`whitney-${partType}-btn`);
                         const otherPreview = document.getElementById(`whitney-${partType}-preview`);
@@ -1135,14 +1159,14 @@
         function loadInitialClothing() {
             ['whitney', 'ame'].forEach(character => {
                 const types = character === 'whitney' 
-                    ? ['top', 'bottom', 'shoes']
+                    ? ['top', 'bottom', 'shoes', 'bangs', 'hair']
                     : ['top', 'bottom', 'shoes', 'necktie', 'outer', 'socks', 'bangs', 'hair'];
                 
                 types.forEach(type => {
                     const element = document.getElementById(`${character}-${type}`);
                     if (element) {
-                        // Ame의 앞머리와 뒷머리는 기본적으로 1번 표시
-                        if (character === 'ame' && (type === 'bangs' || type === 'hair')) {
+                        // 두 캐릭터 모두 앞머리와 뒷머리는 기본적으로 1번 표시
+                        if (type === 'bangs' || type === 'hair') {
                             updateClothingImage(character, type);
                         } else {
                             element.style.display = 'none';
