@@ -569,6 +569,9 @@
                 <button class="dress-btn" id="whitney-hair-btn" onclick="toggleOutfitPreview('whitney', 'hair')">
                     <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_hair.png" alt="뒷머리">
                 </button>
+                <button class="dress-btn" id="whitney-sticker-btn" onclick="toggleOutfitPreview('whitney', 'sticker')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_sticker.png" alt="스티커">
+                </button>
             </div>
             
             <!-- 오른쪽 옷입히기 버튼들 (Ame) -->
@@ -600,6 +603,9 @@
                 <button class="dress-btn" id="ame-hair-btn" onclick="toggleOutfitPreview('ame', 'hair')">
                     <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_hair.png" alt="뒷머리">
                 </button>
+                <button class="dress-btn" id="ame-sticker-btn" onclick="toggleOutfitPreview('ame', 'sticker')">
+                    <img src="https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/icon_sticker.png" alt="스티커">
+                </button>
             </div>
             
             <!-- Whitney 상의 프리뷰 -->
@@ -630,6 +636,11 @@
             <!-- Whitney 뒷머리 프리뷰 -->
             <div class="outfit-preview left" id="whitney-hair-preview" style="top: calc(50% + 120px);">
                 <div class="outfit-preview-title">뒷머리</div>
+            </div>
+            
+            <!-- Whitney 스티커 프리뷰 -->
+            <div class="outfit-preview left" id="whitney-sticker-preview" style="top: calc(50% + 180px);">
+                <div class="outfit-preview-title">스티커</div>
             </div>
             
             <!-- Ame 상의 프리뷰 -->
@@ -677,6 +688,11 @@
                 <div class="outfit-preview-title">뒷머리</div>
             </div>
             
+            <!-- Ame 스티커 프리뷰 -->
+            <div class="outfit-preview right" id="ame-sticker-preview" style="top: calc(50% + 220px);">
+                <div class="outfit-preview-title">스티커</div>
+            </div>
+            
             <!-- 하단 중앙 버튼들 -->
             <div class="bottom-buttons">
                 <button class="deco-btn" id="deco-btn-1" onclick="toggleDecoFrame(1)">
@@ -718,6 +734,8 @@
                             <img id="whitney-top" class="clothing-image" alt="Whitney Top">
                             <!-- 앞머리 레이어 -->
                             <img id="whitney-bangs" class="clothing-image" alt="Whitney Bangs">
+                            <!-- 스티커 컨테이너 (여러 개) -->
+                            <div id="whitney-sticker-container" class="accessory-container"></div>
                             <!-- 액세서리 컨테이너 (여러 개) -->
                             <div id="whitney-accessory-container" class="accessory-container"></div>
                         </div>
@@ -746,6 +764,8 @@
                             <img id="ame-outer" class="clothing-image" alt="Ame Outer">
                             <!-- 앞머리 레이어 -->
                             <img id="ame-bangs" class="clothing-image" alt="Ame Bangs">
+                            <!-- 스티커 컨테이너 (여러 개) -->
+                            <div id="ame-sticker-container" class="accessory-container"></div>
                             <!-- 액세서리 컨테이너 (여러 개) -->
                             <div id="ame-accessory-container" class="accessory-container"></div>
                         </div>
@@ -767,7 +787,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // 버전 관리 (캐시 갱신용)
-        const APP_VERSION = '3.4.0';
+        const APP_VERSION = '3.5.0';
         console.log('App Version:', APP_VERSION);
         
         // 이미지 URL에 버전 추가
@@ -843,7 +863,8 @@
                 shoes: 0,
                 accessory: [], // 배열로 변경
                 bangs: 1, // 앞머리 기본값 1
-                hair: 1  // 뒷머리 기본값 1
+                hair: 1,  // 뒷머리 기본값 1
+                sticker: [] // 스티커 배열
             },
             ame: {
                 top: 0,
@@ -854,7 +875,8 @@
                 outer: 0,
                 socks: 0,
                 bangs: 1, // 앞머리 기본값 1
-                hair: 1  // 뒷머리 기본값 1
+                hair: 1,  // 뒷머리 기본값 1
+                sticker: [] // 스티커 배열
             }
         };
 
@@ -866,7 +888,8 @@
                 shoes: 10,
                 accessory: 15,
                 bangs: 10,  // Whitney 앞머리 최대 개수
-                hair: 10    // Whitney 뒷머리 최대 개수
+                hair: 10,   // Whitney 뒷머리 최대 개수
+                sticker: 15 // Whitney 스티커 최대 개수
             },
             ame: {
                 top: 20,
@@ -877,7 +900,8 @@
                 outer: 10,
                 socks: 10,
                 bangs: 10,  // 앞머리 최대 개수
-                hair: 10    // 뒷머리 최대 개수
+                hair: 10,   // 뒷머리 최대 개수
+                sticker: 15 // Ame 스티커 최대 개수
             }
         };
 
@@ -889,20 +913,20 @@
 
         // 의상 이미지 URL 생성 함수
         function getClothingImageUrl(character, type, number) {
-            const fileType = type === 'accessory' ? 'acc' : type;
+            const fileType = (type === 'accessory') ? 'acc' : type;
             return addVersionToUrl(`https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/${character}_${fileType}_${number}.png`);
         }
 
         // 아이콘 이미지 URL 생성 함수
         function getIconImageUrl(character, type, number) {
-            const fileType = type === 'accessory' ? 'acc' : type;
+            const fileType = (type === 'accessory') ? 'acc' : type;
             return addVersionToUrl(`https://raw.githubusercontent.com/Devi-ce/whitame_nanagom/main/${character}_${fileType}_${number}_icon.png`);
         }
 
         // 페이지 로드 시 모든 프리뷰 미리 생성
         function preloadAllPreviews() {
             // Whitney 프리뷰 - bangs와 hair 추가
-            ['top', 'bottom', 'shoes', 'accessory', 'bangs', 'hair'].forEach(type => {
+            ['top', 'bottom', 'shoes', 'accessory', 'bangs', 'hair', 'sticker'].forEach(type => {
                 const preview = document.getElementById(`whitney-${type}-preview`);
                 if (preview) {
                     createPreviewItems('whitney', type, preview);
@@ -910,7 +934,7 @@
             });
             
             // Ame 프리뷰
-            ['top', 'bottom', 'shoes', 'accessory', 'necktie', 'outer', 'socks', 'bangs', 'hair'].forEach(type => {
+            ['top', 'bottom', 'shoes', 'accessory', 'necktie', 'outer', 'socks', 'bangs', 'hair', 'sticker'].forEach(type => {
                 const preview = document.getElementById(`ame-${type}-preview`);
                 if (preview) {
                     createPreviewItems('ame', type, preview);
@@ -934,7 +958,7 @@
             
             // 같은 캐릭터의 다른 프리뷰와 버튼만 비활성화
             if (character === 'whitney') {
-                ['top', 'bottom', 'shoes', 'accessory', 'bangs', 'hair'].forEach(partType => {
+                ['top', 'bottom', 'shoes', 'accessory', 'bangs', 'hair', 'sticker'].forEach(partType => {
                     if (partType !== type) {
                         const otherButton = document.getElementById(`whitney-${partType}-btn`);
                         const otherPreview = document.getElementById(`whitney-${partType}-preview`);
@@ -943,7 +967,7 @@
                     }
                 });
             } else if (character === 'ame') {
-                ['top', 'bottom', 'shoes', 'accessory', 'necktie', 'outer', 'socks', 'bangs', 'hair'].forEach(partType => {
+                ['top', 'bottom', 'shoes', 'accessory', 'necktie', 'outer', 'socks', 'bangs', 'hair', 'sticker'].forEach(partType => {
                     if (partType !== type) {
                         const otherButton = document.getElementById(`ame-${partType}-btn`);
                         const otherPreview = document.getElementById(`ame-${partType}-preview`);
@@ -965,9 +989,9 @@
         function updatePreviewSelection(character, type, container) {
             const items = container.querySelectorAll('.outfit-item');
             items.forEach((item, idx) => {
-                if (type === 'accessory') {
+                if (type === 'accessory' || type === 'sticker') {
                     const number = idx + 1;
-                    if (currentClothing[character].accessory.includes(number)) {
+                    if (currentClothing[character][type].includes(number)) {
                         item.classList.add('selected');
                     } else {
                         item.classList.remove('selected');
@@ -992,7 +1016,7 @@
             });
         }
 
-        // 프리뷰 아이템 생성 (한 번만 생성) - 아이콘 이미지 사용
+        // 프리뷰 아이템 생성 (한 번만 생성) - 아이콘 이미지 사용, Whitney의 hair는 empty 아이템 제외
         function createPreviewItems(character, type, container) {
             // 이미 생성되어 있으면 스킵
             if (container.dataset.initialized === 'true') {
@@ -1001,7 +1025,8 @@
             
             const fragment = document.createDocumentFragment();
             
-            if (type !== 'accessory') {
+            // Whitney의 hair와 accessory, sticker는 empty 아이템을 생성하지 않음
+            if (type !== 'accessory' && type !== 'sticker' && !(character === 'whitney' && type === 'hair')) {
                 const emptyItem = document.createElement('div');
                 emptyItem.className = 'outfit-item empty';
                 emptyItem.innerHTML = '✕';
@@ -1039,6 +1064,14 @@
                         updatePreviewSelection(character, type, container);
                     };
                     if (currentClothing[character].accessory.includes(i)) {
+                        item.classList.add('selected');
+                    }
+                } else if (type === 'sticker') {
+                    item.onclick = () => {
+                        toggleSticker(character, i);
+                        updatePreviewSelection(character, type, container);
+                    };
+                    if (currentClothing[character].sticker.includes(i)) {
                         item.classList.add('selected');
                     }
                 } else {
@@ -1102,9 +1135,58 @@
             });
         }
 
+        // 스티커 토글 함수
+        function toggleSticker(character, number) {
+            playClickSound();
+            
+            const stickers = currentClothing[character].sticker;
+            const index = stickers.indexOf(number);
+            
+            if (index > -1) {
+                // 이미 선택된 경우 제거
+                stickers.splice(index, 1);
+            } else {
+                // 선택되지 않은 경우 추가
+                stickers.push(number);
+            }
+            
+            updateStickers(character);
+            
+            // 프리뷰 업데이트
+            const preview = document.getElementById(`${character}-sticker-preview`);
+            if (preview.classList.contains('show')) {
+                createPreviewItems(character, 'sticker', preview);
+            }
+        }
+
+        // 스티커 업데이트 함수
+        function updateStickers(character) {
+            const container = document.getElementById(`${character}-sticker-container`);
+            
+            // 기존 스티커 이미지 모두 제거
+            container.innerHTML = '';
+            
+            // 선택된 스티커들 추가
+            currentClothing[character].sticker.forEach(number => {
+                const img = document.createElement('img');
+                img.className = 'accessory-image';
+                img.src = getClothingImageUrl(character, 'sticker', number);
+                img.style.display = 'block';
+                img.onerror = () => {
+                    img.style.display = 'none';
+                };
+                container.appendChild(img);
+            });
+        }
+
         // 의상 선택
         function selectClothing(character, type, number) {
             playClickSound();
+            
+            // Whitney의 hair는 0으로 설정할 수 없음
+            if (character === 'whitney' && type === 'hair' && number === 0) {
+                return;
+            }
             
             currentClothing[character][type] = number;
             updateClothingImage(character, type);
